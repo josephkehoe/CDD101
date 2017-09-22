@@ -13,4 +13,4 @@ SIMPLE: helloThreads.cpp
 
 
 CLEAN:
-	rm *.o
+	rm a.out
