@@ -1,0 +1,228 @@
+
+
+\documentclass{beamer}
+ 
+\usepackage[utf8]{inputenc}
+ \usetheme{Madrid}
+ \usecolortheme{beaver}
+ \usefonttheme{structuresmallcapsserif}
+ \usepackage{listings}
+%Information to be included in the title page:
+
+
+\title[The Map Pattern] %optional
+{The Map Pattern}
+
+\subtitle{A Short Introduction}
+
+\author[Dr. Joseph Kehoe] % (optional, for multiple authors)
+{Joseph Kehoe\inst{1}}
+
+\institute[IT Carlow] % (optional)
+{
+	\inst{1}%
+	Department of Computing and Networking\\
+	Institute of Technology Carlow
+}
+
+\date[ITC 2017] % (optional)
+{CDD101, 2017}
+
+\logo{\includegraphics[height=1.5cm]{itcarlowlogo.png}}
+
+
+
+
+ 
+ \AtBeginSection[]
+ {
+ 	\begin{frame}
+ 		\frametitle{Table of Contents}
+ 		\tableofcontents[currentsection]
+ 	\end{frame}
+ }
+ 
+ 
+ 
+\begin{document}
+ 
+\frame{\titlepage}
+ 
+ 
+ 
+ \begin{frame}
+ 	\frametitle{Table of Contents}
+ 	\tableofcontents
+ \end{frame}
+ 
+ 
+ \section{Definition}
+\begin{frame}
+\frametitle{Definition}
+
+\begin{itemize}
+	\item The Map pattern replicates a function over every element of an index set.
+	\item The function is applied to every element in the set concurrently.
+	\item The index set may be abstract or associated with the elements of a collection.
+	\item The function being replicated is called  an \emph{elemental function}.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Related Patterns}
+Map is used for problems that are \emph{Embarrassingly Parallel}.
+
+Often Combined with other patterns
+
+\begin{itemize}
+	\item Collectives often combined with map
+	\begin{itemize}
+		\item Gather
+		\item Reduction
+		\item Scan
+	\end{itemize}
+	\item Generalisations of Map:
+	\begin{itemize}
+		\item Stencil
+		\item Convolution
+		\item Recurrance
+		\item Workpile
+	\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Type of Concurrency}
+\begin{itemize}
+	\item If the elemental function contins no control flow then it is \emph{SIMD}
+	\item If there is control flow it is  \emph{SPMD}
+	\item Can also be \emph{SIMT} (\emph{SPMD} on tiled \emph{SIMD} hardware)
+	\item If there are no side effects as a result of the elemental function then it is deterministic
+	\item (This is good because?)
+\end{itemize}
+\end{frame}
+\section{Examples}
+\begin{frame}
+	\frametitle{Example SAXPY}
+SAXPY - Scaled Vector Addition
+
+For each element i in a vector Y:
+$y[i] := a.x[i]+y[i]$
+where $y$ and $x$ are Vectors, $a$ is a constant
+
+\begin{itemize}
+	\item Depending on type of vector
+	\item float (single precision) \textbf{SAXPY}
+	\item Double \textbf{DAXPY}
+	\item Complex float \textbf{CAXPY}
+	\item Complex Double \textbf{ZAXPY}
+\end{itemize}
+
+The operation has a low arithmetic intensity (measure it!)
+
+This implies it does not scale well (why?)
+\end{frame}
+
+\begin{frame}[fragile=singleslide]
+	\frametitle{Serial Implementation}
+\textbf{Basic Code}
+
+
+\begin{lstlisting}
+void saxpy(int n, float a,float y[], float x[])
+{
+	for (int i=0; i < n; ++i)
+	{
+		y[i]=a * x[i] + y[i];
+	}
+}
+\end{lstlisting}
+
+
+
+\begin{itemize}
+	\item Tiling will improve scalability
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example Mandelbrot Set}
+
+\begin{itemize}
+	\item Set of all points on plane c that do not go to infinity when $z=z^{2}+c$ is iterated (for ever)
+	\item $z$ starts out at 0
+	\item It has been shown that if the length of $z$ is greater than 2 then it is guaranteed to diverge
+\end{itemize}
+\end{frame}
+
+
+
+\begin{frame}[fragile=singleslide]
+	\frametitle{Mandelbrot Implementation}
+	
+	\textbf{Elemental function}
+	\begin{lstlisting}
+	int calc(Complex c, int depth)
+	{
+		int count=0;
+		Complex z=0;
+		for(int i=0;i<depth;++i)
+		{
+			if (abs(z)>2.0)
+			{
+				break;
+			}
+			z=z*z+c;
+			count++;
+		}
+		return count;
+	}
+	\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile=singleslide]
+	\frametitle{Mandelbrot Implementation}
+	
+	\textbf{Main Loop}
+	\begin{lstlisting}
+	mandel( int p[][], int row, int col, int depth)
+	{
+	for(int i=0;i<row,++i)
+	{
+	for(int k=0;k<col;++k)
+	{
+	p[i][k]=calc(Complex(i,k),depth);
+	}
+	}
+	}
+	\end{lstlisting}
+\end{frame}
+
+\section{Optimisation}
+\begin{frame}
+	\frametitle{Sequence of Maps versus Map of Sequence}
+\begin{itemize}
+	\item A sequence of maps does not scale well (why?)
+	\item To increase arithmetic complexity we must do more work between memory reads
+so change into a a map of sequence (code fusion)
+	\item We load all data at the start of the map
+	\item Keep intermediate results in registers
+	\item Write out final result at end
+\end{itemize}
+\end{frame}
+\section{Related Patterns}
+\begin{frame}
+	\frametitle{Related Patterns}
+\begin{description}
+	\item[Stencil] each element reads in from surrounding elements but does not write to them
+	\item[Convolution]	Stencil with weigths added to neighbouring elements
+	\item[Workpile]	Work can grow dynamically as we are doing map
+	\item[Divide and Conquor] Divide problem into smaller problems until base case can be solved serially
+\end{description}
+\end{frame}
+ 
+ 
+ 
+ 
+\end{document}
+
