@@ -1,0 +1,177 @@
+
+
+\documentclass{beamer}
+ 
+\usepackage[utf8]{inputenc}
+ \usetheme{Madrid}
+ \usecolortheme{beaver}
+ \usefonttheme{structuresmallcapsserif}
+ \usepackage{listings}
+%Information to be included in the title page:
+
+
+\title[The Stencil Pattern] %optional
+{The Stencil Pattern}
+
+\subtitle{A Short Introduction}
+
+\author[Dr. Joseph Kehoe] % (optional, for multiple authors)
+{Joseph Kehoe\inst{1}}
+
+\institute[IT Carlow] % (optional)
+{
+	\inst{1}%
+	Department of Computing and Networking\\
+	Institute of Technology Carlow
+}
+
+\date[ITC 2017] % (optional)
+{CDD101, 2017}
+
+\logo{\includegraphics[height=1.5cm]{itcarlowlogo.png}}
+
+
+
+
+ 
+ \AtBeginSection[]
+ {
+ 	\begin{frame}
+ 		\frametitle{Table of Contents}
+ 		\tableofcontents[currentsection]
+ 	\end{frame}
+ }
+ 
+ 
+ 
+\begin{document}
+ 
+\frame{\titlepage}
+ 
+ 
+ 
+ \begin{frame}
+ 	\frametitle{Table of Contents}
+ 	\tableofcontents
+ \end{frame}
+ 
+ 
+ \section{Definition}
+\begin{frame}
+\frametitle{Definition}
+
+\begin{itemize}
+	\item The Stencil pattern is a special case of the Map pattern.
+	\item The function is applied to every element in the set concurrently as with the map.
+	\item But the imnput to the elemental function includes not just the current instance but also other elements in its local neighbourhood
+	\item The output is a function of some neighbouring elements in an input collection.
+	\item The function contains dependencies on its surrounding elements
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Related Patterns}
+\begin{itemize}
+\item Stencil is a specific case of a Map
+
+\item The map elemental functions has no dependencies but the stencil has
+
+\item The stencil has read dependencies
+
+\item It is a very common pattern in the real world
+
+\item Can be one, two or N dimensional (usually represented as a grid (matrix)
+\end{itemize}
+\end{frame}
+\section{Details}
+\begin{frame}
+	\frametitle{Details}
+	\begin{itemize}
+		\item Neighbourhood is specified using a set of fixed offsets relative to the output position
+		\begin{itemize}
+			\item Von Neuman neighbourhood (North, South, east and West)
+			\item Moore Neighbourhood (8 compass points NE,NW,SE,SW,N,S,E,W)
+		\end{itemize}
+		\item Show these as offsets on 1,2 and 3D grids!
+		\item Grid can be sparse or dense
+		\begin{itemize}
+			\item There are special ways of handling sparse matrices
+		\end{itemize}
+	\end{itemize}
+\end{frame}
+
+\section{Usage}
+\begin{frame}
+	\frametitle{Usage of Stencils}
+\begin{itemize}
+	\item Image and Signal Processing (medical, satelite and vision)
+	\item Partial Differential Equation (PDE) solvers over regular grids
+	\item Seismic Simulations (especially oil and gas)
+	\item Weather Simulation
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile=singleslide]
+	\frametitle{Serial Implementation}
+\textbf{Basic Code}
+
+
+\begin{lstlisting}
+void stencil(int dim,float in[], float out[],
+			func f,int size)
+{
+	float neighbours[size];
+	for (int i=0; i < dim; ++i)
+	{
+		neighbours=calcNeighbours(in,i,size);
+		out[i]=f(neighbours);
+	}
+}
+\end{lstlisting}
+
+
+
+\begin{itemize}
+	\item calcNeighbours depends on neighbourhood type
+\end{itemize}
+\end{frame}
+
+
+
+
+
+
+\section{Optimisation}
+\begin{frame}
+	\frametitle{Cache Behaviour}
+\begin{itemize}
+	\item Cache behaviour is very important
+	\item The grid is usually divided into tiles
+	\item Each thread computes all elements in one (or more) tile(s)
+	\begin{itemize}
+		\item Each tile is mostly self contained but elements at the edge of one tile will need to read elements in the adjacent tiles
+		\item This is handled using \textbf{ghost} tiles that is tiles we need to read from another tile but do not update
+		\item Set of ghost tiles known as \textbf{halo}
+	\end{itemize}
+	\item Each tile will need to communicate with adjacent tiles (why?)
+	\item Shape of tiles will affect cache interaction
+\end{itemize}
+\end{frame}
+ 
+ \begin{frame}
+ 	\frametitle{Tile Shape}
+ 	\begin{itemize}
+ 		\item Grid usually stored in array
+ 		\item When are two array locations stored beside each other in memory?
+ 		\begin{itemize}
+ 			\item Depends on programming language (Fortran vs C)
+ 		\end{itemize}
+ 		\item Optimising tiles for stencils sometimes known as \textbf{strip-mining}
+ 		 		\begin{itemize}
+ 		 			\item Strips are a multiple of cache line width (to prevent false sharing - what is this?)
+ 		 		\end{itemize}
+ 	\end{itemize}
+ \end{frame}
+\end{document}
+
