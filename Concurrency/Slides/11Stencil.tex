@@ -173,5 +173,17 @@ void stencil(int dim,float in[], float out[],
  		 		\end{itemize}
  	\end{itemize}
  \end{frame}
+\section{Recurrances}
+\begin{frame}
+\frametitle{Recurrances}
+    \begin{itemize}
+      \item Recurrances are neighbourhoods of \textbf{outputs}
+      \item Instances in a recurrance can depend on values computed by other instances
+      \item In serial code this appears as loop carried dependencies in which iterations of the loop depend on previous iterations
+    \end{itemize}
+Even though the loop iterations are not independent it is still possible to partallelize the loop
+\end{frame}
+\subsection{Example}
+
 \end{document}
 
