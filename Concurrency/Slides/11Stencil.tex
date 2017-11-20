@@ -207,7 +207,7 @@ void recurrance(int xdim,int ydim,
   {
     for(int k=0; k<ydim;++k)
     {
-      out[i]=f(in[i,k],out[i-i][k],out[i][k-1]);
+      out[i,k]=f(in[i,k],out[i-i][k],out[i][k-1]);
     }
   }
 }
