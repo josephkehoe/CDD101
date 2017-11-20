@@ -1,3 +1,5 @@
+#ifndef SEMAPHORE_H
+#define SEMAPHORE_H 
 #include <mutex>
 #include <condition_variable>
 #include <chrono>
@@ -7,6 +9,8 @@
    Uses C++11 features such as mutex and condition variables to implement Semaphore
 
 */
+
+
 class Semaphore
 {
 private:
@@ -23,3 +27,5 @@ public:
     void Signal();
 
 };
+
+#endif
