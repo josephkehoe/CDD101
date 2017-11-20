@@ -184,6 +184,34 @@ void stencil(int dim,float in[], float out[],
 Even though the loop iterations are not independent it is still possible to partallelize the loop
 \end{frame}
 \subsection{Example}
-
+\begin{frame}
+\frametitle{Example Recurrance}
+\begin{itemize}
+	\item Assume a grid (array) of data
+	\item Each element a[i][k] depends on the output of the value to its left and above it
+	\item That is, a[i][k] depends on a[i-1][k] and a[i][k-1]
+	\item Show this on a diagram
+	\item This can be paralellised using a \textbf{hyperplane}
+	\item This can be difficult to implement
+\end{itemize}
+\end{frame}
+\begin{frame}[fragile=singleslide]
+	\frametitle{Example Recurrance}
+\begin{lstlisting}
+void recurrance(int xdim,int ydim, 
+                float in[xdim][ydim], 
+                float out[xdim][ydim])
+{
+  float neighbours[size];
+  for (int i=0; i < xdim; ++i)
+  {
+    for(int k=0; k<ydim;++k)
+    {
+      out[i]=f(in[i,k],out[i-i][k],out[i][k-1]);
+    }
+  }
+}
+\end{lstlisting}
+\end{frame}
 \end{document}
 
