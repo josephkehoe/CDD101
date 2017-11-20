@@ -1,0 +1,165 @@
+
+
+\documentclass{beamer}
+ 
+\usepackage[utf8]{inputenc}
+ \usetheme{Madrid}
+ \usecolortheme{beaver}
+ \usefonttheme{structuresmallcapsserif}
+ \usepackage{listings}
+%Information to be included in the title page:
+
+
+\title[Reduce and Scan] %optional
+{Reduce and Scan Patterns}
+
+\subtitle{A Short Introduction}
+
+\author[Dr. Joseph Kehoe] % (optional, for multiple authors)
+{Joseph Kehoe\inst{1}}
+
+\institute[IT Carlow] % (optional)
+{
+	\inst{1}%
+	Department of Computing and Networking\\
+	Institute of Technology Carlow
+}
+
+\date[ITC 2017] % (optional)
+{CDD101, 2017}
+
+\logo{\includegraphics[height=1.5cm]{itcarlowlogo.png}}
+
+
+
+
+ 
+ \AtBeginSection[]
+ {
+ 	\begin{frame}
+ 		\frametitle{Table of Contents}
+ 		\tableofcontents[currentsection]
+ 	\end{frame}
+ }
+ 
+ 
+ 
+\begin{document}
+ 
+\frame{\titlepage}
+ 
+ 
+ 
+ \begin{frame}
+ 	\frametitle{Table of Contents}
+ 	\tableofcontents
+ \end{frame}
+ 
+ 
+ \section{Reduce}
+\begin{frame}
+\frametitle{Definition}
+
+\begin{itemize}
+	\item The Reduce pattern is where a sequence of input data is reduced down to a single output value.
+	\item A Combiner function is applied to every member of the input set.
+	\item The combiner function operates a a pair of input values \textbf{result=combine(a,b)}
+	\item Examples include using \textbf{+} to get the sum of a sequence
+	\item We assume that the associated pairs of input can be combined in different orders and still get the same answers
+	\item e.g.  a+b+c = b+a+c = b+c+a = a+c+b = c+a+b = c+b+a
+\end{itemize}
+\end{frame}
+
+
+ \begin{frame}[fragile=singleslide]
+ 	\frametitle{Simple Example}
+\begin{lstlisting}
+ 	float sum(int dim,float in[])
+ 	{
+	 	float sum=0.0;
+ 		for (int i=0; i < dim; ++i)
+ 		{
+ 			sum +=in[i];
+ 		}
+ 		return sum;
+ 	}
+ \end{lstlisting}
+ \end{frame}
+  \begin{frame}[fragile=singleslide]
+  	\frametitle{Simple OpenMP Implementation}
+  	Reduction is built in for simple operators
+  	\begin{lstlisting}
+  	float sum(int dim,float in[])
+  	{
+  	float sum=0.0;
+  	#pragma omp simd parallel for reduction(+:res)
+  	for (int i=0; i < dim; ++i)
+  	{
+  	sum +=in[i];
+  	}
+  	return sum;
+  	}
+  	\end{lstlisting}
+  \end{frame}
+  \section{Complex Operators}
+\begin{frame}
+	\frametitle{More Complex Operators}
+\begin{itemize}
+\item What if our operator is not supported by the \textbf{reduction} clause?
+
+\item Produce our own code using Tiling
+
+\item First each thread produces a result for its own subsequence
+
+\item Then combine all results for each tile into one value
+\end{itemize}
+\end{frame}
+  \begin{frame}[fragile=singleslide]
+  	\frametitle{Simple OpenMP Implementation}
+  	\begin{lstlisting}
+  	float sum(int dim,float in[])
+  	{
+  	float result=0.0;
+  	float tileResult[NumThreads];
+  	#pragma omp parallel for
+  	for (int i=0; i < dim; ++i)
+  	{
+  	  int tid = omp_get_thread_num();
+  	  tileResult[tid] =op(tileResult[tid],in[i]);
+  	}
+  	for (int i=0; i < dim; ++i)
+  	{
+  	  result=op(tileResult[i],result);
+  	}
+  	return result;
+  	}
+  	\end{lstlisting}
+  \end{frame}
+  
+  \section{Scan}
+  \begin{frame}
+  	\frametitle{Definition}
+  	
+  	\begin{itemize}
+  		\item Produces all partial reductions of an input sequence to produce a new output sequence
+  		\item used in e.g. integration
+  		\item Using sum as an example - each element will contain the sun of all previous elements
+  		\begin{itemize}
+  			\item \textbf{Inclusive} scan means the sum includes everything up to and including the current element
+  			\item \textbf{Exclusive} scan means we sum only the previous elements (do not include ourselves)
+  			\item Show output of each type on sequence: 3, 4, 6, 8, 1, 4
+  		\end{itemize}
+  	\end{itemize}
+  \end{frame}
+   \begin{frame}
+   	\frametitle{Approach}
+   	If using standard fork join we use a three phase approach
+   	\begin{enumerate}
+   		\item Tile the sequence and reduce each tile in parallel
+   		\item Do an eclusive scan of the reduction values (always exclusive)
+   		\item Scan each of the tiles where the initial value is that calculated by the previous step
+   	\end{enumerate}
+   	Or use \textbf{tasks} to implement a tree based approach
+   \end{frame}
+\end{document}
+
