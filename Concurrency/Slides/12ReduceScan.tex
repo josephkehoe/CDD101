@@ -92,7 +92,7 @@
   	float sum(int dim,float in[])
   	{
   	float sum=0.0;
-  	#pragma omp simd parallel for reduction(+:res)
+  	#pragma omp simd parallel for reduction(+:sum)
   	for (int i=0; i < dim; ++i)
   	{
   	sum +=in[i];
@@ -127,7 +127,7 @@
   	  int tid = omp_get_thread_num();
   	  tileResult[tid] =op(tileResult[tid],in[i]);
   	}
-  	for (int i=0; i < dim; ++i)
+  	for (int i=0; i < NumThreads; ++i)
   	{
   	  result=op(tileResult[i],result);
   	}
