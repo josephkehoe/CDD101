@@ -122,6 +122,46 @@ fnB();
   		\item Local variables captured by value (firstprivate)
   	\end{itemize}
   \end{frame}
+  \section{Examples to try}
+ 
+    \begin{frame}
+    	\textbf{QuickSort}
+    	\begin{itemize}
+    	\item Pick an element, called a pivot, from the array
+    	\item Partitioning: reorder the array so that all elements with values less than the pivot come before the pivot, while all elements with values greater than the pivot come after it (equal values can go either way). After this partitioning, the pivot is in its final position. This is called the partition operation.
+    	\item Recursively apply the above steps to the sub-array of elements with smaller values and separately to the sub-array of elements with greater values.
+    \end{itemize}
+    \end{frame}
+  \begin{frame}[fragile=singleslide]
+  	\frametitle{QuickSort Pseudocode}
+  	\begin{lstlisting}
+algorithm quicksort(A, lo, hi) is
+  if lo < hi then
+    p := partition(A, lo, hi)
+    quicksort(A, lo, p - 1 )
+    quicksort(A, p + 1, hi)
 
+algorithm partition(A, lo, hi) is
+  pivot := A[hi]
+  i := lo - 1    
+  for j := lo to hi - 1 do
+    if A[j] < pivot then
+      i := i + 1
+      swap A[i] with A[j]
+    if A[hi] < A[i + 1] then
+      swap A[i + 1] with A[hi]
+  return i + 1
+  	\end{lstlisting}
+  \end{frame}
+     \begin{frame}
+     	\frametitle{Examples}
+     	\textbf{MergeSort}
+     	\begin{itemize}
+     		\item Divide the unsorted list into n sublists, each containing 1 element (a list of 1 element is considered sorted)
+     		\item Repeatedly merge sublists to produce new sorted sublists until there is only 1 sublist remaining
+     		\item This will be the sorted list.
+     		
+     	\end{itemize}
+     \end{frame}
 \end{document}
 
