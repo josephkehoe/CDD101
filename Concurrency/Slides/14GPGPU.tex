@@ -1,0 +1,242 @@
+
+
+\documentclass{beamer}
+ 
+\usepackage[utf8]{inputenc}
+ \usetheme{Madrid}
+ \usecolortheme{beaver}
+ \usefonttheme{structuresmallcapsserif}
+ \usepackage{listings}
+%Information to be included in the title page:
+
+
+\title[GPGPU] %optional
+{Ceneral Purpose GPU Programming}
+
+\subtitle{A Short Introduction}
+
+\author[Dr. Joseph Kehoe] % (optional, for multiple authors)
+{Joseph Kehoe\inst{1}}
+
+\institute[IT Carlow] % (optional)
+{
+	\inst{1}%
+	Department of Computing and Networking\\
+	Institute of Technology Carlow
+}
+
+\date[ITC 2017] % (optional)
+{CDD101, 2017}
+
+\logo{\includegraphics[height=1.5cm]{itcarlowlogo.png}}
+
+
+
+
+ 
+ \AtBeginSection[]
+ {
+ 	\begin{frame}
+ 		\frametitle{Table of Contents}
+ 		\tableofcontents[currentsection]
+ 	\end{frame}
+ }
+ 
+ 
+ 
+\begin{document}
+ 
+\frame{\titlepage}
+ 
+ 
+ 
+ \begin{frame}
+ 	\frametitle{Table of Contents}
+ 	\tableofcontents
+ \end{frame}
+ 
+ 
+ \section{Definition}
+\begin{frame}
+\frametitle{Definition}
+GPU: Graphics Processing Unit
+\begin{itemize}
+	\item A Integrated Circuit dedicated to graphics processing
+	\item Uses an SIMD model (as this best suits Graphics programming)
+	\begin{itemize}
+		\item Many "simple" cores
+		\item Cores contain many ALUs
+	\end{itemize}
+	\item SIMT model now employed in GPUs
+\end{itemize}
+\end{frame}
+
+ \section{Architecture}
+\begin{frame}
+	\frametitle{Architecture}
+	\begin{itemize}
+		\item Different manufacturers have different architectures but in general terms:
+		\item Each GPU has multiple Cores (simpler than CPU cores)
+		\item Each Core has a number of SIMD units
+		\item Each core is an SIMD procressor
+	\end{itemize}
+\end{frame}
+
+ \section{Memory Model}
+\begin{frame}
+	\frametitle{Memory Model}
+	\begin{itemize}
+		\item GPUs tend to be seperate from CPU
+		\item There is a cost to getting data from CPU to GPU
+		\begin{itemize}
+			\item GPU and CPU have seperate memory
+			\item must offload data to GPU before computation and then move result back to CPU at end
+			\item up to 10m instructions per offload
+		\end{itemize}
+		\item Allowing GPU and CPU to share the same memory would change dynamics of GPU usage
+	\end{itemize}
+\end{frame}
+\begin{frame}
+	\frametitle{Memory Model}
+	Four types of memory in GPU
+	\begin{description}
+		\item [Private Memory] Available only to single work item/SIMD unit 
+		\item [Local Memory] Local to workgroup/core
+		\item [Global Memory] Shared between entire GPU
+		\item [Constant Memory] Read only memory
+	\end{description}
+	Much effort is put into fitting data to these memory sizes
+\end{frame}
+
+\section{API's}
+\begin{frame}
+	\frametitle{API's}
+	From low level to high:
+	\begin{itemize}
+		\item OpenCL, CUDA
+		\item ArrayFire, Thrust, C++ AMP
+		\item OpenACC, OpenMP
+	\end{itemize}
+	APIs are in flux and changing (improving) year to year
+\end{frame}
+
+\begin{frame}
+	\frametitle{CUDA,OpenCL}
+	5 Step Process
+	\begin{itemize}
+		\item Create a context within which the \textbf{kernel} will run with a command queue
+		\item Compile the kernel
+		\item Create buffers for inpuit and output data
+		\item Enqueue a command that executes the kernel once for each work item
+		\item Retrieve the results
+	\end{itemize}
+	There can be a lot of boiler plate code but the kernel is the heart of the computation
+\end{frame}
+
+
+\section{Examples}
+ \begin{frame}[fragile=singleslide]
+ 	\frametitle{Saxpy}
+\begin{lstlisting}
+//kernel
+__global__
+void saxpy(int n, float a, float *x, float *y)
+{
+  int i = blockIdx.x*blockDim.x + threadIdx.x;
+  if (i < n) y[i] = a*x[i] + y[i];
+}
+
+int main(void)
+{
+int N = 1<<20;
+float *x, *y, *d_x, *d_y;
+x = (float*)malloc(N*sizeof(float));
+y = (float*)malloc(N*sizeof(float));
+ cudaMalloc(&d_x, N*sizeof(float)); 
+ cudaMalloc(&d_y, N*sizeof(float));
+ \end{lstlisting}
+ \end{frame}
+  
+  \begin{frame}[fragile=singleslide]
+  	\frametitle{Saxpy}
+  	\begin{lstlisting}
+//later that day...
+ cudaMemcpy(d_x, x, N*sizeof(float),
+             cudaMemcpyHostToDevice);
+ cudaMemcpy(d_y, y, N*sizeof(float),
+             cudaMemcpyHostToDevice);
+ // Perform SAXPY on 1M elements
+ saxpy<<<(N+255)/256, 256>>>(N, 2.0f, d_x, d_y);
+ cudaMemcpy(y, d_y, N*sizeof(float), 
+             cudaMemcpyDeviceToHost);
+ cudaFree(d_x);
+ cudaFree(d_y);
+ free(x);
+ free(y);
+}
+  	
+  	\end{lstlisting}
+  \end{frame}
+
+
+  \begin{frame}[fragile=singleslide]
+  	\frametitle{Matrix Multiplication Serial}
+  	\begin{lstlisting}
+  	//serial
+    int a[M][P], b[P][N], c[M][N];
+  	for(int i=0;i<M;++i){
+  	  for(int k=0;k<N;++k){
+  	    int sum=0;
+  	    for(int f=0;f<P;++f){
+  	      sum+=a[i][f]*b[f][k];
+  	    }
+  	    c[i][k]=sum;
+  	  }
+  	}
+  	
+  	\end{lstlisting}
+  \end{frame}
+  
+    \begin{frame}[fragile=singleslide]
+    	\frametitle{Matrix Multiplication Kernel- OpenCL}
+    	\begin{lstlisting}
+    	__kernel void matrixmult(uint widthA,
+    	          __global const int* inA,
+    	          __global const int* inB,
+    	          __global int *out){
+    	int i=get_global_id(0);
+    	int j=get_global_id(1);
+    	int outWidth=get_global_size(0);
+    	int outHeight=get_global_size(1);
+    	int sum=0;
+    	for(int k=0;k<widthA;++k){
+    	  sum+=a[i*widthA+k]*b[k*outWidth+j];
+    	}
+    	out[i*outWidth+i]=sum;
+    }
+    	\end{lstlisting}
+    \end{frame}
+    
+        \begin{frame}[fragile=singleslide]
+        	\frametitle{Reduction Kernel- OpenCL}
+        	\begin{lstlisting}
+        __kernel void minum(__global const int* inA,
+        	    __global int sum,
+        	    __local int* tmp){
+        	int i=get_global_id(0);
+        	int n=get_global_size(0);
+        	tmp[i]=in[i];
+        	barrier(CLK_LOCAL_MEM_FENCE);
+        	for(int k=n/2;k>0;k=k/2){
+        	  if(i<k){
+        	    tmp[i] +=tmp[i+k];
+        	  }
+        	  barrier(CLK_LOCAL_MEM_FENCE);
+        	}
+        	if (i==0) sum=tmp[0];
+        }
+        	\end{lstlisting}
+        \end{frame}
+        
+\end{document}
+
