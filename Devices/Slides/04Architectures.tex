@@ -1,0 +1,184 @@
+
+
+\documentclass{beamer}
+ 
+\usepackage[utf8]{inputenc}
+ \usetheme{Madrid}
+ \usecolortheme{beaver}
+ \usefonttheme{structuresmallcapsserif}
+ \usepackage{listings}
+%Information to be included in the title page:
+
+
+\title[Overview] %optional
+{Devices}
+
+\subtitle{An Overview}
+
+\author[Dr. Joseph Kehoe] % (optional, for multiple authors)
+{Joseph Kehoe\inst{1}}
+
+\institute[IT Carlow] % (optional)
+{
+	\inst{1}%
+	Department of Computing and Networking\\
+	Institute of Technology Carlow
+}
+
+\date[ITC 2017] % (optional)
+{CDD101, 2017}
+
+\logo{\includegraphics[height=1.5cm]{../../itcarlowlogo.png}}
+
+
+
+
+ 
+ \AtBeginSection[]
+ {
+ 	\begin{frame}
+ 		\frametitle{Table of Contents}
+ 		\tableofcontents[currentsection]
+ 	\end{frame}
+ }
+ 
+ 
+ 
+\begin{document}
+ 
+\frame{\titlepage}
+ 
+ 
+ 
+ \begin{frame}
+ 	\frametitle{Table of Contents}
+ 	\tableofcontents
+ \end{frame}
+ 
+ 
+ \section{Architecture Constraints}
+\begin{frame}
+	\frametitle{Cost}
+	Questions to ask
+	\begin{itemize}
+	
+		\item What is the price point of this device?
+		\item How many devices will we ship?
+		
+	\end{itemize}
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Power Requirements}
+	Questions to ask
+	\begin{itemize}
+		
+		\item How long must the device function for?
+		\item How much space is there for batteries?
+		\item What sensors do we need?
+		
+	\end{itemize}
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Storage}
+	Questions to ask
+	\begin{itemize}
+		
+		\item How much data is stored on chip?
+		\item Can we offload to remote servers?
+		\item How large is the code base?
+		
+	\end{itemize}
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Speed}
+	Questions to ask
+	\begin{itemize}
+		
+		\item How complex is the code?
+		\item Does it have hard real time constraints?
+		\item Dowe need to do more than one thing at a time?
+		
+	\end{itemize}
+	
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{Environment}
+	Questions to ask
+	\begin{itemize}
+		
+		\item Where will the device be used?
+		\item How long must it last?
+		\item Will it be remote (from WiFi etc.)?
+		
+	\end{itemize}
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Size}
+	Questions to ask
+	\begin{itemize}
+		
+		\item How big can the device be?
+		\item What weight can it be?
+		
+	\end{itemize}
+	
+\end{frame}
+ \section{How to Proceed}
+ 
+ \begin{frame}
+ 	\frametitle{Prototype}
+ 	Develop a Proof of Concept
+ 	\begin{itemize}
+ 		
+ 		\item What are we trying to show?
+ 		\item We may need multiple prototypes (iterated development)
+ 		\item List the constraints in order of importance and show each can be accomodated
+ 		\item Pay attention to most difficult constraints
+ 		
+ 	\end{itemize}
+ 	
+ \end{frame}
+ 
+  \begin{frame}
+  	\frametitle{Release}
+  	Move from breadboard to IC
+  	\begin{itemize}
+  		
+  		\item Replace general purpose board with custom designed board
+  		\item Begin miniturisation of device
+  		\item Design housing to hold device (waterproof, shockproof, etc?)
+  		\item Custom Board
+  		\item PGA - Programmale Gate Array
+  		\item Custom IC Fabrication
+  		
+  	\end{itemize}
+  	
+  \end{frame}  
+
+       \begin{frame}
+       	\frametitle{Testing}
+       	Repeat all testing on finished device
+       	\begin{itemize}
+       		
+       		\item Standard Software Testing
+       		\item Environmental Testing
+       		\item Timing Issues
+       		\item Power loss
+       		\item and so on...
+       		
+       	\end{itemize}
+       	
+       \end{frame} 
+          
+\end{document}
+
