@@ -150,6 +150,75 @@ I am going to assume you are familiar with these lower level protocols
      \end{frame}
   
 \section{Remote Object Invocation}
+
+   \begin{frame}
+   	\frametitle{ROI}
+   	
+   	\begin{itemize}
+   		\item Extends RPC to objects
+   		\item Improves on RPC
+   		\item Objects seperate state from interface (perfect for distributed Objects!)
+   		\item Keep state on server and put Interface on client
+   		\item Local proxy implements interface and holds reference to remote object
+   		\item It marshals data before sending, sends data, receives return values and unmarshalls them 
+   	\end{itemize}
+   	%\includegraphics[height=4cm]{Old-Server.jpg}
+   \end{frame}
+   
+      \begin{frame}
+      	\frametitle{ROI (on server)}
+      	
+      	\begin{itemize}
+      		\item Server has a server "stub" known as a skeleton
+      		\item This receives data, unmarshals it and calls the server object implementation. It then marshalls the return values and sends them back to the client proxy
+      		\item Often use the \textbf{Object Adapter} pattern to wrap an object interface around an existing system
+      		\item Object is transient if it cannot be offloaded from server. So if server goes down object is lost
+      	\end{itemize}
+      	%\includegraphics[height=4cm]{Old-Server.jpg}
+      \end{frame}
+      
+            \begin{frame}
+            	\frametitle{ROI (Objecct References)}
+            	\begin{itemize}
+            		\item Object is persistent if it can be offloaded (saved) from the server to backup storage. 
+            		\item This allows the object to be reanimated if the server crashes
+            		\item This even allows us to move the object around if we have a system wide object reference
+            		\item Need a DNS for object references if this is to work.
+            	\end{itemize}
+            	%\includegraphics[height=4cm]{Old-Server.jpg}
+            \end{frame}
+      \begin{frame}
+      	\frametitle{ROI (Dynamic Invocation)}
+      	\begin{itemize}
+      		\item If IDL is compiled at runtime then we have\textbf{ Static Object Invocation}
+      		\item If we can decode interface at runtime then we have \textbf{Dynamic Object Invocation}
+      		\item Static Call is:  accountRef->deposit(500);
+      		\item Dynamic Call is: sendMessage(accountRef,deposit,500)
+      	\end{itemize}
+      	%\includegraphics[height=4cm]{Old-Server.jpg}
+      \end{frame}      
+      \begin{frame}
+      	\frametitle{ROI (efficiency)}
+      	\begin{itemize}
+      		\item Remote Object Innvocation can be inefficient
+      		\item Esp. if object state is small or parameters are large
+      		\item If system can distinguish between local and remote objects then we can circumvent this
+      	\end{itemize}
+      	%\includegraphics[height=4cm]{Old-Server.jpg}
+      \end{frame}  
+      \begin{frame}
+      	\frametitle{Java RMI}
+      	\begin{itemize}
+      		\item Integrated into the language (high level approach)
+      		\item Cloning of remote objects is difficult so local proxy is not cloned during process, just the remote obejct
+      		\item We must explicitly get a new reference to the remote cloned object
+      		\item Remote objects cannot be \textbf{synchronised} - only the proxy can be
+      		\item Why? hint: Client crashes during operation
+      		\item Anything serialisable can be marshalled
+      		\item Proxys can be serialised (so we can pass them around)
+      	\end{itemize}
+      	%\includegraphics[height=4cm]{Old-Server.jpg}
+      \end{frame}          
 \section{Messaging}
 
 \end{document}
