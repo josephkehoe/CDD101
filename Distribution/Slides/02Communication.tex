@@ -91,12 +91,63 @@ I am going to assume you are familiar with these lower level protocols
   	\frametitle{RPC}
   	Allow code to call procedures not resident on the local machine
   	\begin{itemize}
-  		\item 
+  		\item Causes a procedure to execute in a different address space (commonly on another computer on a shared network), which is coded as if it were a normal (local) procedure call, without the programmer explicitly coding the details for the remote interaction. 
+  		\item The programmer writes essentially the same code whether the subroutine is local or remote
+  		\item Suited to Client Server Architectures
+  		\item RPC is a form of Inter Process Communication (IPC)
+  		\item RPC is usually synchronous in nature
   	\end{itemize}
-  	
-  	
   	%\includegraphics[height=4cm]{Old-Server.jpg}
   \end{frame}
+  
+  
+  
+  
+    	
+ \begin{frame}
+ 	\frametitle{RPC}
+ 	Sequence of events
+ 	\begin{itemize}   	
+	   \item The client calls the client stub. The call is a local procedure call, with parameters pushed on to the stack in the normal way.
+    	\item The client stub packs the parameters into a message and makes a system call to send the message. Packing the parameters is called marshalling.
+    	\item The client's local operating system sends the message from the client machine to the server machine.
+    	\item The local operating system on the server machine passes the incoming packets to the server stub.
+    	\item The server stub unpacks the parameters from the message. Unpacking the parameters is called unmarshalling.
+    	\item Finally, the server stub calls the server procedure. The reply traces the same steps in the reverse direction.
+   	\end{itemize}
+   	%\includegraphics[height=4cm]{Old-Server.jpg}
+   \end{frame} 
+   \begin{frame}
+   	\frametitle{IDL}
+   	To let different clients access servers, a number of standardized RPC systems have been created.
+   	\begin{itemize}
+        \item Most of these use an interface description language (IDL) to let various platforms call the RPC
+        \item The IDL files can then be used to generate code to interface between the client and servers.
+    \end{itemize}
+    \begin{itemize}
+	    \item XML-RPC is an RPC protocol that uses XML to encode its calls and HTTP as a transport mechanism.
+	    \item JSON-RPC is an RPC protocol that uses JSON-encoded messages
+	    \item JSON-WSP is an RPC protocol that uses JSON-encoded messages
+	    \item SOAP is a successor of XML-RPC and also uses XML to encode its HTTP-based calls.
+    \end{itemize}
+     	%\includegraphics[height=4cm]{Old-Server.jpg}
+     \end{frame} 
+     
+     \begin{frame}
+     	\frametitle{RPC}
+     	
+     	\begin{itemize}
+     		\item Packaging of parameters for transport to remote server is called \textbf{Marshalling}
+     		\item Parameters are either:
+     		\begin{itemize}
+     			\item Pass by Value
+     			\item Pass by Reference
+     			\item Pass by copy Restore
+     		\end{itemize}
+     		\item Passing pointers is obviously very difficult
+     	\end{itemize}
+     	     	%\includegraphics[height=4cm]{Old-Server.jpg}
+     \end{frame}
   
 \section{Remote Object Invocation}
 \section{Messaging}
