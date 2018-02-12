@@ -217,9 +217,72 @@ I am going to assume you are familiar with these lower level protocols
       		\item Anything serialisable can be marshalled
       		\item Proxys can be serialised (so we can pass them around)
       	\end{itemize}
+      	\href{https://www.mkyong.com/java/java-rmi-hello-world-example/}{See here}
       	%\includegraphics[height=4cm]{Old-Server.jpg}
       \end{frame}          
 \section{Messaging}
-
+      \begin{frame}
+      	\frametitle{Synchronous and Asynchronous Communication}
+      	\begin{description}
+      		\item [Persistemt Asynchronous] Receiver need not be running when message is sent. Sender is not blocked
+      		\item[Persistent Synchronous] Receiver need not be running when message is sent. Sender is blocked until  acknowledgement is send from system receiving message (possibly before receiver starts running).
+      		\item[Transient Asynchronous] Sender is not blocke but can only send when receiver is running.
+      		
+      	\end{description}
+      	%\includegraphics[height=4cm]{Old-Server.jpg}
+      \end{frame} 
+      \begin{frame}
+      	\frametitle{Synchronous and Asynchronous Communication}
+      	\begin{description}
+      		\item[Receipt-based transient Synchronous] Receiver must be running for message to be sent and sender is blocked until receiver sends acknowledgement of receipt.
+      		\item[Delivery-based transient synchronous] Receiver must be running before message can be sent. Sender is blocked until receiver accepts message and starts working on it.
+      		\item[Response-based transient synchronous] Receiver must be running before message is sent. Sender is blocked until request is processed by receiver.
+      	\end{description}
+      	%\includegraphics[height=4cm]{Old-Server.jpg}
+      \end{frame} 
+      \begin{frame}
+      	\frametitle{Messaging}
+      	\begin{itemize}
+      		\item Persistent Asynchronous Messaging
+      		\item Message can be send sucessfully even if receiving object/system is not be running at the time
+      		\item Sender sends and "forgets"
+      		\item Message transfer can take "minutes"
+      		\item Leads to loosely coupled systems
+      		\item Guarantees delivery but does not guarantee it will be "read" 
+      		\item Suited to distributed systems (why?)
+      		\item SMTP is a good example (email)
+      	\end{itemize}
+      	%\includegraphics[height=4cm]{Old-Server.jpg}
+      \end{frame} 
+      \begin{frame}
+      	\frametitle{Message Passing Interface}
+      	\begin{itemize}
+      		\item MPI is a standardized and portable message-passing standard designed by a group of researchers from academia and industry to function on a wide variety of parallel computing architectures
+      		\item The standard defines the syntax and semantics of a core of library routines in C, C++, Fortran and Python
+      		\item Commonly used on clusters 
+      	\end{itemize}
+      	%\includegraphics[height=4cm]{Old-Server.jpg}
+      \end{frame}
+      \begin{frame}
+      	\frametitle{MPI Primitives}
+      	\begin{description}
+      		\item[MPI\_bsend] Append outgoing message to local send buffer
+      		\item[MPI\_send] Send a message and wait until copied to local or remote buffer
+      		\item[MPI\_ssend] Send a message and wait until receipt starts
+      		\item[MPI\_sendrecv] Send a message and wait for reply
+      	\end{description}
+      	%\includegraphics[height=4cm]{Old-Server.jpg}
+      \end{frame}
+            \begin{frame}
+            	\frametitle{MPI Primitives}
+            	\begin{description}
+            		\item[MPI\_isend] Pass reference to outgoing message, and continue
+            		\item[MPI\_issend] Pass refence to outgoing message , and wait until receipt starts
+            		\item[MPI\_recv] Receive a message, block if there is none
+            		\item[MPI\_irecv] Check if there is an incoming message, but do not block
+            	\end{description}
+            	\href{http://materials.jeremybejarano.com/MPIwithPython/introMPI.html}{see here}
+            	%\includegraphics[height=4cm]{Old-Server.jpg}
+            \end{frame}
 \end{document}
 
