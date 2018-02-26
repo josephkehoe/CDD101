@@ -1,0 +1,202 @@
+
+
+\documentclass{beamer}
+ 
+\usepackage[utf8]{inputenc}
+ \usetheme{Madrid}
+ \usecolortheme{beaver}
+ \usefonttheme{structuresmallcapsserif}
+ \usepackage{listings}
+%Information to be included in the title page:
+
+
+\title[Java RMI] %optional
+{Java RMI}
+
+\subtitle{An Overview}
+
+\author[Dr. Joseph Kehoe] % (optional, for multiple authors)
+{Joseph Kehoe\inst{1}}
+
+\institute[IT Carlow] % (optional)
+{
+	\inst{1}%
+	Department of Computing and Networking\\
+	Institute of Technology Carlow
+}
+
+\date[ITC 2018] % (optional)
+{CDD101, 2018}
+
+\logo{\includegraphics[height=1.5cm]{../../itcarlowlogo.png}}
+
+
+
+
+ 
+ \AtBeginSection[]
+ {
+ 	\begin{frame}
+ 		\frametitle{Table of Contents}
+ 		\tableofcontents[currentsection]
+ 	\end{frame}
+ }
+ 
+ 
+ 
+\begin{document}
+ 
+\frame{\titlepage}
+ 
+%  \begin{frame}
+%  	\frametitle{Table of Contents}
+%  	\tableofcontents
+%  \end{frame}
+ 
+
+
+  \begin{frame}
+  	\frametitle{Introduction}
+
+  	\begin{itemize}
+  		\item RMI is Remote Method Invocation
+  		\item RPC for Objects
+  		\item Integrated into the Java Language
+  		\item Easy to use
+  		\item allows code to call objects in another JVM
+  		\item Runs over TCP/IP
+  	\end{itemize}
+  \end{frame}
+  
+    \begin{frame}
+    	\frametitle{Java RMI vs. Corba}
+    	\begin{itemize}
+    		\item Integrated directly into Java Language
+    		\item Easier to use than Corba
+    		\item Less overhead (marshalling and unmarshalling etc.)
+    		\item Corba allows different languages to talk to each other transparently
+    		\item RMI requires JVM on server - Corba is platform independent
+    		\item Corba is more powerful (services such as object migration)
+    	\end{itemize}
+    \end{frame}
+ 
+ 
+     \begin{frame}
+     	\frametitle{RMI-IIOP}
+     	\begin{itemize}
+     		\item RMI over IIOP (Internet Inter-Orb Protocol)
+     		\item Allows Java RMI to access Corba using the Java Remote Method Protocol (JRMP) as the transport	
+     		\item Simplifies access to Corba but still gets all the benefits
+     		\item Reduces complexity and footprint of Corba
+     	\end{itemize}
+
+     \end{frame}
+     
+      
+ 
+    \begin{frame}
+    	\frametitle{Sample Interface Code}
+
+    	\begin{example}
+    	import java.rmi.Remote;
+    	
+    	import java.rmi.RemoteException;
+    	
+    	public interface RmiServerIntf extends Remote \{
+    	
+    	public String getMessage() throws RemoteException;
+    	
+    	\}
+        \end{example}	
+    \end{frame}           
+    \begin{frame}
+    	\frametitle{Sample Client Code}
+
+    	\begin{example}
+import java.rmi.Naming;
+
+public class RmiClient \{
+ 
+	public static void main(String args[]) throws Exception \{
+
+		RmiServerIntf obj = (RmiServerIntf)Naming.lookup("//localhost/RmiServer");
+
+		System.out.println(obj.getMessage()); 
+
+	\}
+
+\}
+    	\end{example}	
+    \end{frame}            
+    \begin{frame}
+    	\frametitle{Sample Server Code}
+
+    	\begin{example}
+import java.rmi.Naming;
+
+import java.rmi.RemoteException;
+
+import java.rmi.server.UnicastRemoteObject;
+
+import java.rmi.registry.*; 
+
+public class RmiServer extends UnicastRemoteObject implements RmiServerIntf \{
+
+	public static final String MESSAGE = "Hello World";
+	
+	public RmiServer() throws RemoteException \{
+	
+		super(0);    // required to avoid the 'rmic' step, see below
+
+	\}
+	
+	public String getMessage() \{
+
+		return MESSAGE;
+
+	\}
+    	\end{example}	
+    \end{frame}  
+    \begin{frame}
+    	\frametitle{Sample Server Code}
+    	
+    	\begin{example}
+    public static void main(String args[]) throws Exception \{
+    
+    	System.out.println("RMI server started");
+    	
+    	try \{ //special exception handler for registry creation
+    		
+    		LocateRegistry.createRegistry(1099); 
+    		
+    		System.out.println("java RMI registry created.");
+    		
+    	\} catch (RemoteException e) \{
+    	//do nothing, error means registry already exists
+    	
+    	System.out.println("java RMI registry already exists.");
+
+    \}
+    
+    //Instantiate RmiServer
+    
+    RmiServer obj = new RmiServer();
+    
+    // Bind this object instance to the name "RmiServer"
+
+    Naming.rebind("//localhost/RmiServer", obj);
+
+    System.out.println("PeerServer bound in registry");
+    
+\}
+\}
+    	\end{example}	
+    \end{frame}  
+        \begin{frame}
+        	\frametitle{Sample Server Code}
+Try the example \href{https://docs.oracle.com/javase/tutorial/rmi/overview.html}{here!}        	
+	
+        \end{frame} 
+        
+\end{document}
+

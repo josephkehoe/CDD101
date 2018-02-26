@@ -1,7 +1,0 @@
-
-
-
-g++ -g -I/opt/include EchoSK.cc eg1.cc -lomniORB4 -lomnithread -lomniDynamic4 -L/opt/lib -I/opt/include
-
-
-http://www.yolinux.com/TUTORIALS/CORBA.html
