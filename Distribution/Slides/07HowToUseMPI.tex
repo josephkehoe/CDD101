@@ -1,0 +1,139 @@
+
+
+\documentclass{beamer}
+ 
+\usepackage[utf8]{inputenc}
+ \usetheme{Madrid}
+ \usecolortheme{beaver}
+ \usefonttheme{structuresmallcapsserif}
+ \usepackage{listings}
+%Information to be included in the title page:
+
+
+\title[MPI] %optional
+{Employing MPI sucessfully}
+
+\subtitle{An Overview}
+
+\author[Dr. Joseph Kehoe] % (optional, for multiple authors)
+{Joseph Kehoe\inst{1}}
+
+\institute[IT Carlow] % (optional)
+{
+	\inst{1}%
+	Department of Computing and Networking\\
+	Institute of Technology Carlow
+}
+
+\date[ITC 2018] % (optional)
+{CDD101, 2018}
+
+\logo{\includegraphics[height=1.5cm]{../../itcarlowlogo.png}}
+
+
+
+
+ 
+ \AtBeginSection[]
+ {
+ 	\begin{frame}
+ 		\frametitle{Table of Contents}
+ 		\tableofcontents[currentsection]
+ 	\end{frame}
+ }
+ 
+ 
+ 
+\begin{document}
+ 
+\frame{\titlepage}
+ 
+%  \begin{frame}
+%  	\frametitle{Table of Contents}
+%  	\tableofcontents
+%  \end{frame}
+ 
+
+    \begin{frame}
+    	\frametitle{Introduction}
+    	Questions we need to answer when using MPI
+    	\begin{itemize}
+    		\item How can we balance the load equally across nodes
+    		\item When the process is distributed how do we ensure consistency
+    		\item How do we manage the communication overhead
+    	\end{itemize}
+    \end{frame}
+    \begin{frame}
+    	\frametitle{Examples}
+    	We will look at two examples
+    	\begin{itemize}
+    		\item Wator Simulation (already implemented earlier)
+    		\item Game of Life, a well known and simple simulation
+    	\end{itemize}
+
+    \end{frame}    
+        \begin{frame}
+        	\frametitle{Game of Life Rules}
+        		The universe of the Game of Life is an infinite two-dimensional orthogonal grid of square "cells", each of which is in one of two possible states, alive or dead. Every cell interacts with its eight neighbours. At each step in time, the following transitions occur:
+        	\begin{itemize}
+        		\item Any live cell with fewer than two live neighbours dies, as if caused by underpopulation.
+        		\item Any live cell with two or three live neighbours lives on to the next generation.
+        		\item Any live cell with more than three live neighbours dies, as if by overpopulation.
+        		\item Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
+        	\end{itemize}
+        \end{frame} 
+         \begin{frame}
+         	\frametitle{Game of Life Rules Continued}
+         	\begin{itemize}
+         		\item The initial pattern constitutes the seed of the system.
+         		\item The first generation is created by applying the above rules simultaneously to every cell in the seed—births and deaths occur simultaneously, and the discrete moment at which this happens is sometimes called a tick (in other words, each generation is a pure function of the preceding one).
+         		\item The rules continue to be applied repeatedly to create further generations.
+         	\end{itemize}
+         	  
+         \end{frame}       
+    \begin{frame}
+    	\frametitle{Load Balancing}
+    	For the Game of Life:
+    	\begin{itemize}
+    		\item Each node can process a fraction of the grid
+    		\item Grid size might be a good predictor of work
+    		\item Grid can be split different ways (horizontally, vertically, etc.)
+    	\end{itemize}
+    	e.g. n nodes with each simulating $\frac{1}{n} ^{th}$ of the grid
+    \end{frame}         	
+       \begin{frame}
+       	\frametitle{Consistency}
+       	For the Game of Life:
+       	\begin{itemize}
+       		\item Each subgrid will need to communicate with its neighbouring subgrids between steps
+       		\item Cells on edge of grid need to know value of cells adjacent to them but hosted on different node
+       	\end{itemize}
+       	Can this be minimised?
+       \end{frame}      	
+       \begin{frame}
+       	\frametitle{Communication Overhead}
+       	For the Game of Life:
+       	\begin{itemize}
+       		\item Edge cells need to be sent to neighbouring nodes 
+       		\item How could this be minimised
+       		\item (does the way arrays are stored affect anything?)
+       		\item Need to work out overhead versus grid size.  For grids below a certain size the commmunication overhead will outweight the grid processing!
+       	\end{itemize}
+       	Can this be minimised?
+       \end{frame}         	
+        \begin{frame}
+        	\frametitle{Efficiency}
+        	Once it is working start thinking about efficiency:
+        	\begin{itemize}
+        		\item Grid size to optimise communication overhead-processing time 
+        		\item Grid shape to minimise communication
+        		\item Can we allow a grid to step ahead in time?
+        		\item does equal grid size mean equal work?
+        	\end{itemize}
+        \end{frame}       	
+        	
+  
+
+        
+\end{document}
+
