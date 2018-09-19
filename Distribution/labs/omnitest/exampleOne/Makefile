@@ -2,7 +2,7 @@ CC= g++
 LIBS= -lomniORB4 -lomnithread -lomniDynamic4
 FLAGS= -g -I/opt/include -L/opt/lib
 IDLFILES=Echo.idl
-HEADERS=Echo_i.hh
+HEADERS=Echo_i.hh Echo.hh
 CPPFILES= EchoSK.cc eg1.cc Echo_i.cc
 EXE=echo
 
