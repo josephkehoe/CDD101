@@ -1,0 +1,244 @@
+
+
+\documentclass{beamer}
+ 
+\usepackage[utf8]{inputenc}
+ \usetheme{Madrid}
+ \usecolortheme{beaver}
+ \usefonttheme{structuresmallcapsserif}
+ \usepackage{listings}
+%Information to be included in the title page:
+
+
+\title[Communications] %optional
+{Communications in IoT}
+
+\subtitle{Communications}
+
+\author[Dr. Joseph Kehoe] % (optional, for multiple authors)
+{Joseph Kehoe\inst{1}}
+
+\institute[IT Carlow] % (optional)
+{
+	\inst{1}%
+	Department of Computing and Networking\\
+	Institute of Technology Carlow
+}
+
+\date[ITC 2017] % (optional)
+{CDD101, 2017}
+
+\logo{\includegraphics[height=1.5cm]{../../itcarlowlogo.png}}
+
+
+
+
+ 
+ \AtBeginSection[]
+ {
+ 	\begin{frame}
+ 		\frametitle{Table of Contents}
+ 		\tableofcontents[currentsection]
+ 	\end{frame}
+ }
+ 
+ 
+ 
+\begin{document}
+ 
+\frame{\titlepage}
+ 
+ \begin{frame}
+ 	\frametitle{Table of Contents}
+ 	\tableofcontents
+ \end{frame}
+ 
+ 
+ \section{Introduction}
+  \begin{frame}
+  	\frametitle{Connectivity}
+  	\begin{itemize}
+  	\item Connectivity is the next great step in computing
+  	\item Reduced size and power allows devices to become invisible
+  	\item and also to be everywhere
+  	\item Being continously connected gives them immense potential
+  	\end{itemize}
+  \end{frame}
+     \begin{frame}
+  	\frametitle{What we look for}
+  	We judge communication technologies by:
+  	\begin{itemize}
+  	\item Speed of data transfer (including latency)
+  	\item Coverage provided
+  	\item Power Requirements
+  	\item Cost
+  	\item Reliability
+  	\item and ...
+  	\end{itemize}
+  \end{frame}
+ \section{Protocols}
+   \begin{frame}
+  	\frametitle{Network Architectures}
+  	\begin{itemize}
+  	\item  Client Server
+  	  	\begin{itemize}
+  			\item  Can be tiered
+  			\item Central node(s) act as servers
+  			\item Other nodes work through servers
+  		\end{itemize}
+  	\item Peer 2 Peer
+  	  	\begin{itemize}
+  			\item  No hierarchy
+  			\item All nodes equal
+  			\item Robust
+  		\end{itemize} 	
+  	\end{itemize}
+  	 Mesh Networks
+  	  	\begin{itemize}
+  			\item  Allows new nodes to join and leave network easily
+  			\item Robust
+  			\item allows nework to grow "organically"
+  		\end{itemize} 
+  \end{frame}
+  
+  \begin{frame}
+  	\frametitle{Protocols}
+  	6LowPAN
+  	\begin{itemize}
+  	\item Based on IPv6
+  	\item Uses a Mesh architecture
+  	\item Robust Scalable, Self healing
+  	\end{itemize}
+  \end{frame}
+   
+  \begin{frame}
+  	\frametitle{Protocols}
+  	Thread
+  	\begin{itemize}
+  	\item Based on IPv6 and 6LowPAN
+  	\item Compliment to WiFi
+  	\item Mesh Network (up to 250 nodes)
+  	\item Includes Authentication and Encryption
+  	\end{itemize}
+  \end{frame}
+ \section{Existing Technologies}
+  \begin{frame}
+  	\frametitle{WiFi}
+  	\begin{itemize}
+  	\item in most homes/offices
+  	\item 2.4 and 5GHz
+  	\item Range 50M
+  	\item 600 Mbps (but 150-200 more typical)
+  	\end{itemize}
+  \end{frame}   
+  \begin{frame}
+  	\frametitle{Cellular}
+  	\begin{itemize}
+  	\item Coverage is almost complete
+  	\item cost per message
+  	\item 900/1800/1900/2100 MHz
+  	\item Range 35km (GSM) 200km (HSPA) 
+  	\item 35Kbps to 10 Mbps
+  \end{itemize}
+  \end{frame} 
+  \begin{frame}
+  	\frametitle{Bluetooth}
+  	Bluetooth Low Energy or Bluetooth Smart
+  	\begin{itemize}
+  	\item 2.4 GHz
+  	\item Range 50-150M 
+  	\item 1 Mbps
+  	\item Small data transfers
+  	\item In most (all) smartphones
+    \end{itemize}
+  \end{frame} 
+ \section{New Short Range Technologies}
+  \begin{frame}
+  	\frametitle{NFC}
+  	Near Field Communication
+  	\begin{itemize}
+  	\item used for contactless payment
+  	\item soon to be in most phones
+  	\item 13.56 MHz
+  	\item 10cm
+  	\item 100-420 Kbps
+  	\end{itemize}
+  \end{frame}
+    \begin{frame}
+  	\frametitle{ZigBee}
+  	Designed for Industrial automation
+  	\begin{itemize}
+  	\item Relaible and low latency
+  	\item Impervious to interference from WiFi/BLE/ZigBee
+  	\item Mesh Networks (232 nodes)
+  	\item Simple protocol
+  	\item 900 MHz
+  	\item 30M
+  	\item 9.6/40/100 Kbps
+  	\end{itemize}
+  \end{frame} 
+  \begin{frame}
+  	\frametitle{Z-Wave}
+  	Designed for Home automation
+  	\begin{itemize}
+  	\item Low power, high security and scalability
+  	\item 2.4 GHz
+  	\item 10-100M
+  	\item 250 Kbps
+  	\end{itemize}
+  \end{frame}   
+ \section{New Long Range Technologies}
+  \begin{frame}
+  	\frametitle{SigFox}
+  	\begin{itemize}
+  	\item UNB (Ultra Narrow Band)
+  	\item 50 microwatts versus 5000  for cellular
+  	\item 20 year stand by time for 2.5A battery
+  	\item Closed source
+  	\item Infrastructure in place
+  	\item 900 Mhz
+  	\item 30-50km
+  	\item 10-1000bps
+  	\end{itemize}
+  \end{frame}
+  \begin{frame}
+  	\frametitle{LoRaWAN}
+  	\begin{itemize}
+  	\item Open Source
+  	\item Low Power
+  	\item uses television white space frequency
+  	\item 2-5km
+  	\item 0.3-50Kbps
+  	\end{itemize}
+  \end{frame}  
+  
+  
+ 
+             \begin{frame}
+  	\frametitle{Security}
+  	Given the amount of data kept online security is vital.
+  	\begin{itemize}
+  		\item Visa Card, Debit Card, Paypall Accounts
+  		\item Passwords (Email, Company Accounts, etc.)
+  		\item Your Identity can be stolen (eDoppleganger!)
+  	\end{itemize}
+  \end{frame} 
+               \begin{frame}
+  	\frametitle{Legal Requirements}
+  	There are restrictions on how data is kept (GDPR).
+  	\begin{itemize}
+  		\item Where can it be stored geographically
+  		\item What can you store
+  	\end{itemize}
+  \end{frame} 
+                 \begin{frame}
+  	\frametitle{Legal Requirements}
+  	There are restrictions on how data is kept (GDPR).
+  	\begin{itemize}
+  		\item Where can it be stored geographically
+  		\item What can you store
+  	\end{itemize}
+  \end{frame} 
+  
+\end{document}
+
