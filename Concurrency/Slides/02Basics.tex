@@ -1,0 +1,211 @@
+
+
+\documentclass{beamer}
+ 
+\usepackage[utf8]{inputenc}
+ \usetheme{Madrid}
+ \usecolortheme{beaver}
+ \usefonttheme{structuresmallcapsserif}
+ \usepackage{listings}
+%Information to be included in the title page:
+
+
+\title[Concurrency] %optional
+{Concurrency}
+
+\subtitle{Some Basics}
+
+\author[Dr. Joseph Kehoe] % (optional, for multiple authors)
+{Joseph Kehoe\inst{1}}
+
+\institute[IT Carlow] % (optional)
+{
+	\inst{1}%
+	Department of Computing and Networking\\
+	Institute of Technology Carlow
+}
+
+\date[ITC 2017] % (optional)
+{CDD101, 2017}
+
+\logo{\includegraphics[height=1.5cm]{../../itcarlowlogo.png}}
+
+
+
+
+ 
+ \AtBeginSection[]
+ {
+ 	\begin{frame}
+ 		\frametitle{Table of Contents}
+ 		\tableofcontents[currentsection]
+ 	\end{frame}
+ }
+ 
+ 
+ 
+\begin{document}
+ 
+\frame{\titlepage}
+ 
+ 
+ 
+ \begin{frame}
+ 	\frametitle{Table of Contents}
+ 	\tableofcontents
+ \end{frame}
+ 
+ 
+ \section{Introduction}
+\begin{frame}
+\frametitle{Composition of Concurrent Algorithms}
+
+\begin{itemize}
+\item Algorithms consist of one or more tasks acting on data
+\item Dependencies will exist between the tasks
+\end{itemize}
+\begin{description}
+\item[Data Dependency] one task requires data to be “prepared” by another task before it can start
+\item[Control Dependency] Task side effects need to be ordered e.g. I/O Operations
+\end{description}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Fork-Join}
+
+\textbf{Fork-Join} is one popular way of managing these depencies
+\begin{itemize}
+\item New control flows (concurrent tasks) are created at a fork point
+\begin{itemize}
+\item One splits into many
+\end{itemize}
+\item Synchronisation occurs when tasks are merged into a single control flow
+\begin{itemize}
+\item Many become one
+\end{itemize}
+\item Each control flow is sequential
+\end{itemize}
+\end{frame}
+
+\section{Strategies}
+\begin{frame}
+	\frametitle{Data versus Function}
+Data Parallelism
+\begin{itemize}
+	\item Parallelism grows as data grows
+	\item This is scalable
+\end{itemize}
+
+Functional Parallelism	
+\begin{itemize}
+	\item Divide task into multiple concurrent tasks
+	\item Not as scalable (why?)
+\end{itemize}
+	
+\end{frame}
+\begin{frame}
+	\frametitle{Regular versus Irregular}
+Regular Parallelism
+\begin{itemize}
+	\item Tasks are similar
+	\item Tasks have predictable dependencies
+	\item E.g. Matrix Multiplication
+\end{itemize}
+
+Irregular Parallelism	
+\begin{itemize}
+	\item Tasks are dissimilar in a manner that creates unpredictable dependencies
+	\item E.g. Search in games
+\end{itemize}
+	
+\end{frame}
+
+
+
+\section{Categories of Parallelism}
+\begin{frame}
+	\frametitle{Thread Parallelism}
+	\begin{itemize}
+	\item Each task has its own flow of control
+	\item Useful for all types of parallelism
+	\end{itemize}
+\begin{description}
+\item[Hardware Thread]
+Thread that is supported by hardware e.g. seperate core for each thread (parallel)
+\item[Software Thread] Software based thread e.g. time slicing of processor time (concurrent)
+\item[Hyperthread]
+Core has duplicated some components to allow it to run two threads at once
+\end{description}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Vector Parallelism}
+	\begin{itemize}
+	\item Single control flow can operate on multiple data elements
+	\begin{itemize}
+	\item Useful for regular parallelism (mainly)
+	\end{itemize}
+
+\item Intel AVX allows register to hold many (8) 32 bit floating point numbers
+	\begin{itemize}
+	\item All can be acted on simultaneously
+	\end{itemize}
+
+\item Requires less silicon to implement than thread based parallelism
+\item This approach can emulate thread parallelism by using Packing or Masking
+	\begin{itemize}
+	\item These “threads” are called fibers
+	\end{itemize}
+
+\end{itemize}
+\end{frame}
+
+\section{Architectures}
+\begin{frame}
+	\frametitle{Flynn's Categories}
+	\begin{description}
+	\item[SISD] Single Instruction, Single Data 
+	\item[SIMD] Single Instruction, Multiple Data
+	\item[MIMD] Multiple Instruction, Multiple Data
+	\item[MISD] Multiple Instruction, Single Data
+	\end{description}
+GPU Vendors use:
+	\begin{description}
+	\item[SIMT] Single Instruction, Multiple Threads (SIMT).
+A Tiled SIMD where each SIMD processor emulates multiple threads (fibers, really) using masking	
+	\end{description}
+
+	
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{von Neumann Bottleneck}
+	There is a memory hierarchy where each level can be more than an order of magnitude slower than the next (from fastest to slowest)
+	\begin{itemize}
+	\item Registers (on each core)
+	\item L1 Cache (Instruction and data caches) on each core
+	\item L2 Cache shared between multiple cores
+	\item L3 Cache one per processor
+	\item RAM Shared by everone on board
+	\item Main Memory (SSD or mechanical) Shared by everyone on box
+	\end{itemize}
+	
+\end{frame}
+
+\section{Performance}
+\begin{frame}
+	\frametitle{Performance}
+	Lots of things affect performance but at a high level remember the following:
+	\begin{description}
+	\item[Data locality] Keep data close to the thread using it
+	\item[Slack] Have more potential tasks than there is actual parallelism
+	\item[Avoid having too many threads] One per core is ideal.
+Use a thread pool!
+	\end{description}
+More on performance later!
+\end{frame}
+    
+\end{document}
+

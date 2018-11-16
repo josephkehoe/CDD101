@@ -1,0 +1,164 @@
+
+
+\documentclass{beamer}
+ 
+\usepackage[utf8]{inputenc}
+ \usetheme{Madrid}
+ \usecolortheme{beaver}
+ \usefonttheme{structuresmallcapsserif}
+ \usepackage{listings}
+%Information to be included in the title page:
+
+
+\title[Concurrency] %optional
+{Concurrency}
+
+\subtitle{A Short Introduction}
+
+\author[Dr. Joseph Kehoe] % (optional, for multiple authors)
+{Joseph Kehoe\inst{1}}
+
+\institute[IT Carlow] % (optional)
+{
+	\inst{1}%
+	Department of Computing and Networking\\
+	Institute of Technology Carlow
+}
+
+\date[ITC 2017] % (optional)
+{CDD101, 2017}
+
+\logo{\includegraphics[height=1.5cm]{../../itcarlowlogo.png}}
+
+
+
+
+ 
+ \AtBeginSection[]
+ {
+ 	\begin{frame}
+ 		\frametitle{Table of Contents}
+ 		\tableofcontents[currentsection]
+ 	\end{frame}
+ }
+ 
+ 
+ 
+\begin{document}
+ 
+\frame{\titlepage}
+ 
+ 
+ 
+ \begin{frame}
+ 	\frametitle{Table of Contents}
+ 	\tableofcontents
+ \end{frame}
+ 
+ 
+ \section{Why Bother?}
+\begin{frame}
+\frametitle{Processor Hard Limits}
+Moore’s Law is in trouble
+\begin{itemize}
+\item Power Wall
+\begin{itemize}
+\item Heat dissipation
+\end{itemize}
+\item Memory Bottleneck
+\begin{itemize}
+\item Von Neumann Architecture
+\end{itemize}
+\item Physical Size Limits
+\begin{itemize}
+\item Cannot go much smaller
+\end{itemize}
+\item Complexity Issues
+\begin{itemize}
+\item Pipelining, Lookahead, Out of Order Execution, Instruction Level Parallelism
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{New Architectures are Required}
+\begin{enumerate}
+	\item Multicores
+	\item General Purpose GPUs
+	\item Clusters – the new supercomputer architecture
+	\item Manycore (Xeon Phi)
+	\end{enumerate}	
+Each has its own issues to overcome
+
+Each requires a different programming approach
+
+ALL REQUIRE PARALLELISM
+	
+\end{frame}
+\section{Definitions}
+\begin{frame}
+	\frametitle{Concurrency versus Parallelism}
+	\begin{itemize}
+	\item Concurrency  is the decomposability property of a program, algorithm, or problem into order-independent or partially-ordered components or units
+\item Parallellism is a type of computation in which many calculations or the execution of processes are carried out simultaneously
+
+	\end{itemize}
+All parallel programs are concurrent but not all concurrent programs are parallel
+\end{frame}
+
+\begin{frame}
+	\frametitle{Processes and Threads}
+	\begin{itemize}
+	\item Both processes and threads are independent sequences of execution. 
+	\item The typical difference is that threads (of the same process) run in a shared memory space, while processes run in separate memory spaces.
+\item Processes communicate via message passing commonly termed Inter Process Communication (IPC) (using e.g. TCP/IP)
+\item As threads share memory space they can access each others memory (and therefore variables) directly commonly called the Shared Memory Approach
+\begin{itemize}
+\item See also hardware threads, hyper threading and SMT
+\end{itemize}
+
+	\end{itemize}
+	
+\end{frame}
+
+\section{Issues}
+\begin{frame}
+	\frametitle{Issues}
+\begin{itemize}
+	\item Sequential Tools and Thinking
+	\item Memory Bottlenecks
+	\item No single model of Parallel Architecture yet
+	\item Load Balancing
+	\item Non determinism
+	\item New Problems
+\begin{itemize}
+	\item Mutual Exclusion 
+	\end{itemize}
+	\item New categories of Error
+	\begin{itemize}
+	\item Deadlock
+		\end{itemize}
+	\end{itemize}	
+	
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{What we want (need)!}
+	\begin{itemize}
+	\item Scalability
+	\item Speedup
+	\item Efficiency
+	\item Portability
+	\item Maintainability
+	\item Determinism
+	\item Composability
+	\item Safety
+	\item Ease of Development
+	\end{itemize}
+	
+\end{frame}
+
+    
+\end{document}
+
