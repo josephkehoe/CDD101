@@ -1,0 +1,187 @@
+
+
+\documentclass{beamer}
+ 
+\usepackage[utf8]{inputenc}
+ \usetheme{Madrid}
+ \usecolortheme{beaver}
+ \usefonttheme{structuresmallcapsserif}
+ \usepackage{listings}
+%Information to be included in the title page:
+
+
+\title[Concurrency] %optional
+{Semaphores}
+
+\subtitle{An Overview}
+
+\author[Dr. Joseph Kehoe] % (optional, for multiple authors)
+{Joseph Kehoe\inst{1}}
+
+\institute[IT Carlow] % (optional)
+{
+	\inst{1}%
+	Department of Computing and Networking\\
+	Institute of Technology Carlow
+}
+
+\date[ITC 2017] % (optional)
+{CDD101, 2017}
+
+\logo{\includegraphics[height=1.5cm]{../../itcarlowlogo.png}}
+
+
+
+
+ 
+ \AtBeginSection[]
+ {
+ 	\begin{frame}
+ 		\frametitle{Table of Contents}
+ 		\tableofcontents[currentsection]
+ 	\end{frame}
+ }
+ 
+ 
+ 
+\begin{document}
+ 
+\frame{\titlepage}
+ 
+ 
+
+\begin{frame}
+\frametitle{What is a Semaphore?}
+Invented by Edsgar Dijkstra
+\begin{itemize}
+\item A Semaphore is an integer with the following properties
+\begin{enumerate}
+\item When you create a semaphore you can initialise it to any integer value but after that you can only perform two operations on it. 
+\item You can increment by one or decrament it by one.
+\item You cannot read the current value of a semaphore
+\item When a thread decrements a semaphore, if the result is negative, the thread blocks itself and cannot continue until the semaphore value is no longer negative
+\item When a thread increments a semaphore, if there are other threads waiting on that semaphore  then one of them becomes unblocked
+\end{enumerate}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Consequences of Definition}
+
+
+\begin{itemize}
+\item When you signal a semaphore you do not necessarily know whether another thread is waiting
+\begin{itemize}
+ \item so the number of unblocked threads may be zero or one
+ \end{itemize} 
+\item In general there is no way of knowing whether a thread will block on a decrement operation
+\item After an increment operation both the incrementing thread and one waiting thread can run concurrently
+\begin{itemize}
+ \item but there is no way of knowing which (if either) will continue immediately
+ \end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{Consequences}
+  The value of a semaphore indicates:
+\begin{itemize}
+	\item Positive integer represents the number of threads that can decrement without blocking
+\item Negative integer represents the number of waiting (blocked) threads
+\item Zero means no threads are waiting
+\end{itemize}
+But you are not allowed to ask a semaphore what its value is!
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{Consequences}
+  Only two operations are allowed on a semaphore:
+\begin{enumerate}
+	\item Decrement the counter
+		\begin{itemize}
+		\item Called dec(), wait() or P()
+		\end{itemize}
+	\item Increment the counter
+		\begin{itemize}
+		\item Called inc(), signal() or V()
+		\end{itemize}
+\end{enumerate}
+But (again!) you are not allowed to ask a semaphore what its value is!
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{Why use Semaphores}
+\begin{itemize}
+	\item They impose constraints that help programmers avoid errors
+	\item Code using semaphores tends to be  clean and organised
+	\item Semaphores have efficient implementations
+	\item Mainly we use them to force you to think clearly about the issues of concurrency
+\end{itemize}
+	Lessons learned here will be applicable to any concurrency programming model you use in the future
+\end{frame}
+
+\begin{frame}
+	\frametitle{Creating Semaphores in C++}
+	Look at the following files online:
+	\begin{itemize}
+	\item Semaphore.h
+	\item Semaphore.cpp
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Signalling with Semaphores}
+	\begin{itemize}
+		\item A single semaphore can be used to send a signal from one thread to another
+		\item To indicate something has happened
+		\item Use a semaphore initialised with value 0
+\begin{itemize}
+\item Thread waiting for signal calls wait
+\item Thread sending signal calls signal
+\end{itemize}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Simple Rendezvous}
+	Generalised Signal Pattern
+	\begin{itemize}
+	\item Thread 1 has to wait for thread 2
+	\item Thread 2 has to wait for thread 1
+	\item Both have to arrive at a certain point before either proceeds
+	\item Thread A
+	\begin{itemize}
+		\item A1;
+		\item A2;
+	\end{itemize}
+	\item Thread B
+	\begin{itemize}
+		\item B1;
+		\item B2;
+	\end{itemize}
+	\item A1 must finish before B2 starts
+	\item B1 must finish before A2 starts
+	\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{Exercise}
+	\begin{itemize}
+	\item Implement both solutions in C++
+	\item Create Makefile
+	\item Document with Doxygen
+	\item Put solution up on github
+	\end{itemize}
+	
+\end{frame}
+
+
+    
+\end{document}
+

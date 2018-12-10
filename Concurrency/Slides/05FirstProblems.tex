@@ -1,0 +1,105 @@
+
+
+\documentclass{beamer}
+ 
+\usepackage[utf8]{inputenc}
+ \usetheme{Madrid}
+ \usecolortheme{beaver}
+ \usefonttheme{structuresmallcapsserif}
+ \usepackage{listings}
+%Information to be included in the title page:
+
+
+\title[Concurrency] %optional
+{Some Classic Concurrency Problems}
+
+\subtitle{An Introduction}
+
+\author[Dr. Joseph Kehoe] % (optional, for multiple authors)
+{Joseph Kehoe\inst{1}}
+
+\institute[IT Carlow] % (optional)
+{
+	\inst{1}%
+	Department of Computing and Networking\\
+	Institute of Technology Carlow
+}
+
+\date[ITC 2017] % (optional)
+{CDD101, 2017}
+
+\logo{\includegraphics[height=1.5cm]{../../itcarlowlogo.png}}
+
+
+
+
+ 
+ \AtBeginSection[]
+ {
+ 	\begin{frame}
+ 		\frametitle{Table of Contents}
+ 		\tableofcontents[currentsection]
+ 	\end{frame}
+ }
+ 
+ 
+ 
+\begin{document}
+ 
+\frame{\titlepage}
+ 
+ 
+
+\begin{frame}
+\frametitle{Mutual Exclusion}
+\begin{itemize}
+\item How do we stop more than one thread accessing a variable at the same time?
+\begin{enumerate}
+\item int count=0
+\item Start Critical Section
+\item count++;
+\item End Critical Section
+\end{enumerate}
+\item Show how this can be done using a Semaphore
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Multiplex}
+\begin{itemize}
+\item Generalise mutual exclusion solution to allow a maximum of N threads access a critical section
+	\begin{itemize}
+	\item Critical section is a block of code that we need to restrict concurrent access to
+ 	\item Only N threads can be in critical section at any one time (N>0)
+ 	\end{itemize} 
+ \item We must show that Deadlock cannot occur under any circumstances
+ \item We should also show fairness
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{Barrier}
+\begin{itemize}
+	\item Rendezvous only works for two threads
+	\item A barrier works for N threads
+	\begin{itemize}
+		\item When first N-1 threads arrive at barrier they are blocked
+		\item When the Nth thread arrives they all continue
+	\end{itemize}
+\end{itemize}
+Hints on next slide!
+\end{frame}
+
+\begin{frame}
+	\frametitle{Barrier Hint}
+\begin{enumerate}
+\item We will need to keep track of the number of threads who have reached the barrier
+\item Use a counter
+\item counter shared by all threads	
+\end{enumerate}
+\end{frame}
+
+\end{document}
+
