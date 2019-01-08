@@ -1,0 +1,19 @@
+\frametitle{Finite Buffer Solution}
+Producer
+^^I\begin{verbatim}
+Event= createEvent()
+Spaces.wait()
+Mutex.wait()
+Buffer.add(event)
+Mutex.signal()
+Items.signal()
+\end{verbatim}
+Consumer
+^^I^^I\begin{verbatim}
+Items.wait()
+Mutex.wait()
+Event = buffer.get()
+Mutex.signal()
+Spaces.signal()
+Event.process()
+\end{verbatim}

@@ -9,7 +9,7 @@ Make for managing code projects
 Doxygen for documenting code
 
 I will go through the following steps with you:
-Tasks
+
 1.	Download the complete set of files using git to clone https://github.com/josephkehoe/CDD101
 (If you are reading this then you have done this already ;-)
 2.  	Find and open the file helloThreads.cpp using emacs (the graphical version of emacs is easier to use for beginners)

@@ -1,0 +1,211 @@
+
+
+\documentclass{beamer}
+ 
+\usepackage[utf8]{inputenc}
+ \usetheme{Madrid}
+ \usecolortheme{beaver}
+ \usefonttheme{structuresmallcapsserif}
+ \usepackage{listings}
+%Information to be included in the title page:
+
+
+\title[Concurrency] %optional
+{Some Classic Concurrency Problems}
+
+\subtitle{Queues}
+
+\author[Dr. Joseph Kehoe] % (optional, for multiple authors)
+{Joseph Kehoe\inst{1}}
+
+\institute[IT Carlow] % (optional)
+{
+	\inst{1}%
+	Department of Computing and Networking\\
+	Institute of Technology Carlow
+}
+
+\date[ITC 2017] % (optional)
+{CDD101, 2017}
+
+\logo{\includegraphics[height=1.5cm]{../../itcarlowlogo.png}}
+
+
+
+
+ 
+ \AtBeginSection[]
+ {
+ 	\begin{frame}
+ 		\frametitle{Table of Contents}
+ 		\tableofcontents[currentsection]
+ 	\end{frame}
+ }
+ 
+ 
+ 
+\begin{document}
+ 
+\frame{\titlepage}
+ 
+ 
+
+\begin{frame}
+\frametitle{Queues}
+\begin{itemize}
+\item Initial Value of semaphore is 0
+\item Code is written so that it is not possible to signal unless a thread is waiting
+	\begin{itemize}
+	\item Value of semaphore is, therefore, never positive!
+	\end{itemize}
+\item Example
+	\begin{itemize}
+	\item We want thread to proceed in pairs
+	\item Leaders and followers
+	\item Leaders cannot proceed unless a follower is waiting
+	\item Similarly for followers
+		\begin{itemize}
+		\item Like Ballroom dancing
+		\end{itemize}
+	\end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Hint}
+\begin{verbatim}
+leaderQ=Semaphore(0)
+followerQ=semaphore(0)
+\end{verbatim}
+\end{frame}
+
+
+\begin{frame}[fragile]
+	\frametitle{Solution}
+	Leader
+	\begin{verbatim}
+followerQ.signal()
+leaderQ.wait()
+dance()
+\end{verbatim}
+	Follower
+	\begin{verbatim}
+leaderQ.signal()
+followerQ.wait()
+dance()
+\end{verbatim}
+
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Issues}
+\begin{itemize}
+	\item It allows leaders and followers to proceed in pairs
+	\item But does it force them to?
+	\begin{itemize}
+	\item It is possible for any number of threads to accumulate before executing dance!
+\end{itemize}
+	\item Change the solution so that it solves this problem
+	\begin{itemize}
+	\item Leader can invoke dance concurrently with only one follower and vice versa
+	\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Hint}
+\begin{verbatim}
+Leaders=Followers=0
+mutex=semaphore(1)
+leaderQ=semaphore(0)
+followerQ=semaphore(0)
+rendezvous=semaphore(0)
+\end{verbatim}
+\end{frame}
+\begin{frame}[fragile]
+	\frametitle{Solution - Leaders}
+\begin{verbatim}
+mutex.wait()
+if followers>0:
+    followers—
+    followersQ.signal()
+else:
+    leaders++
+    mutex.signal()
+    leaderQ.wait()
+dance()
+rendezvous.wait()
+mutex.signal()
+\end{verbatim}
+\end{frame}
+\begin{frame}[fragile]
+	\frametitle{Solution - Followers}
+\begin{verbatim}
+mutex.wait()
+if leaders>0:
+    leaders—
+    leaderQ.signal()
+else:
+    followers++
+    mutex.signal()
+    followerQ.wait()
+dance()
+rendezvous.signal()
+\end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{FIFO Queue}
+\begin{itemize}
+	\item There is no way of telling which thread will be woken
+		\begin{itemize}
+		\item This can lead to unfairness
+		\item A thread may wait forever!
+		\end{itemize}
+	\item To ensure fairness we need to guarantee an ordering on which thread will be woken
+	\item Design a fifo queue that preserves ordering on threads waiting
+		\begin{itemize}
+		\item Create a class “fifo” with wait and signal methods that enforce these constraints
+		\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Hint}
+\begin{itemize}
+	\item Each thread has its own semaphore
+	\begin{verbatim}
+    mySem=semaphore(0)
+    class fifo:
+        def __init__(self):
+            self.queue=Queue()
+            self.mutex=semaphore(1)
+    \end{verbatim}
+	\item Assume Queue class has add and remove methods
+		\begin{itemize}
+			\item but is not thread safe!
+		\end{itemize}
+\end{itemize}
+\end{frame}
+\begin{frame}[fragile]
+	\frametitle{Solution}
+\begin{verbatim}
+class fifo:
+    def __init__(self):
+        self.queue=Queue()
+        self.mutex=semaphore(1)
+    def wait():
+        self.mutex.wait()
+        self.queue.add(mySem)
+        self.mutex.signal()
+        mySem.wait()
+    def signal():
+        self.mutex.wait()
+        sem=self.queue.remove()
+        self.mutex.signal()
+        sem.signal()
+\end{verbatim}
+\end{frame}
+\end{document}
+

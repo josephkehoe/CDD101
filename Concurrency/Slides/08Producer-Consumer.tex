@@ -1,0 +1,199 @@
+
+
+\documentclass{beamer}
+ 
+\usepackage[utf8]{inputenc}
+ \usetheme{Madrid}
+ \usecolortheme{beaver}
+ \usefonttheme{structuresmallcapsserif}
+ \usepackage{listings}
+%Information to be included in the title page:
+
+
+\title[Concurrency] %optional
+{Some Classic Concurrency Problems}
+
+\subtitle{The Producer Consumer Problem}
+
+\author[Dr. Joseph Kehoe] % (optional, for multiple authors)
+{Joseph Kehoe\inst{1}}
+
+\institute[IT Carlow] % (optional)
+{
+	\inst{1}%
+	Department of Computing and Networking\\
+	Institute of Technology Carlow
+}
+
+\date[ITC 2017] % (optional)
+{CDD101, 2017}
+
+\logo{\includegraphics[height=1.5cm]{../../itcarlowlogo.png}}
+
+
+
+
+ 
+ \AtBeginSection[]
+ {
+ 	\begin{frame}
+ 		\frametitle{Table of Contents}
+ 		\tableofcontents[currentsection]
+ 	\end{frame}
+ }
+ 
+ 
+ 
+\begin{document}
+ 
+\frame{\titlepage}
+ 
+ 
+
+\begin{frame}
+\frametitle{Producers and Consumers}
+\begin{itemize}
+\item A common pattern is for the division of labor amongst threads
+	\begin{itemize}
+	\item E.g. Some threads consume while others produce
+	\end{itemize}
+\item Producers create items of some kind and add them to a data structure (buffer)
+\item Consumers remove the items and process them
+	\begin{itemize}
+	\item E.g. Event driven programs
+	\end{itemize}
+\item Consumers sometimes known as event handlers
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{The Producer Consumer Pattern}
+\begin{itemize}
+\item While an item is being add to or removed from buffer the buffer is in an inconsistent state
+\item Therefore we must guarantee exclusive access to the buffer
+\item If a consumer thread arrives when the buffer is empty it must wait until a producer adds a new item
+\item Producer
+\begin{verbatim}
+Event= createEvent()
+Buffer.add(event)
+\end{verbatim}
+\item Consumer
+\begin{verbatim}
+Event = Buffer.get()
+Event.process()
+\end{verbatim}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]
+	\frametitle{Hint One}
+	Leader
+	\begin{verbatim}
+Mutex=semaphore(1) //control access to buffer
+Items=semaphore(0) //blocks when buffer is empty
+\end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Hint Two}
+Local variable event (for adding to or taking from buffer)
+\begin{itemize}
+	\item Event is local to thread
+	\item Each thread has their own version of event!
+	\item Each thread may have their own run-time stack so all local variables are thread specific
+	\begin{itemize}
+	\item If threads are objects then we can add attributes to the objects
+	\item If threads have unique ID’s then we can use ID as an index into an array or hash table
+	\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Solution}
+	Producer
+\begin{verbatim}
+Event= createEvent()
+Mutex.wait()
+Buffer.add(event)
+Items.signal()
+Mutex.signal()
+\end{verbatim}
+Consumer
+\begin{verbatim}
+Items.wait()
+Mutex.wait()
+Event = buffer.get()
+Mutex.signal()
+Event.process()
+\end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Improved Solution}
+	Signaling inside the mutex can be inefficient (Why?)
+\begin{verbatim}
+Event= createEvent()
+Mutex.wait()
+Buffer.add(event)
+Mutex.signal()
+Items.signal()
+\end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Incorrect Solution}
+	\begin{itemize}
+	\item Items can be inaccurate given certain interleavings
+	\item We can try correct this…
+	\end{itemize}
+
+But what is wrong with this Consumer (below)?
+\begin{verbatim}
+Mutex.wait()
+Items.wait()
+Event = buffer.get()
+Mutex.signal()
+Event.process()
+\end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Finite Buffers}
+\begin{itemize}
+	\item If buffer is finite it can fill up
+	\item In that case producers should wait until the buffer has freed up some space before adding to buffer
+	\item We cannot check the value of items as we are not allowed to do this!
+	\item Hint
+		\begin{itemize}
+		\item Add another semaphore initialised to the buffer size!
+		\item Spaces=semaphore(buffer.size)
+		\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Finite Buffer Solution}
+Producer
+	\begin{verbatim}
+Event= createEvent()
+Spaces.wait()
+Mutex.wait()
+Buffer.add(event)
+Mutex.signal()
+Items.signal()
+\end{verbatim}
+Consumer
+		\begin{verbatim}
+Items.wait()
+Mutex.wait()
+Event = buffer.get()
+Mutex.signal()
+Spaces.signal()
+Event.process()
+\end{verbatim}
+\end{frame}
+
+\end{document}
+

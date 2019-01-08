@@ -1,0 +1,11 @@
+\frametitle{Barrier Hint}
+\begin{verbatim}
+turnstile = Semaphore (0)
+turnstile2 = Semaphore (1)
+mutex = Semaphore (1)
+\end{verbatim}
+\begin{itemize}
+^^I\item Use two turnstiles
+\item One turnstile is always locked!
+\item Sometimes called a two phase barrier
+\end{itemize}

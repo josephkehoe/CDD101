@@ -1,0 +1,104 @@
+
+
+\documentclass{beamer}
+ 
+\usepackage[utf8]{inputenc}
+ \usetheme{Madrid}
+ \usecolortheme{beaver}
+ \usefonttheme{structuresmallcapsserif}
+ \usepackage{listings}
+%Information to be included in the title page:
+
+
+\title[Concurrency] %optional
+{Some Classic Concurrency Problems}
+
+\subtitle{Reusable Barriers}
+
+\author[Dr. Joseph Kehoe] % (optional, for multiple authors)
+{Joseph Kehoe\inst{1}}
+
+\institute[IT Carlow] % (optional)
+{
+	\inst{1}%
+	Department of Computing and Networking\\
+	Institute of Technology Carlow
+}
+
+\date[ITC 2017] % (optional)
+{CDD101, 2017}
+
+\logo{\includegraphics[height=1.5cm]{../../itcarlowlogo.png}}
+
+
+
+
+ 
+ \AtBeginSection[]
+ {
+ 	\begin{frame}
+ 		\frametitle{Table of Contents}
+ 		\tableofcontents[currentsection]
+ 	\end{frame}
+ }
+ 
+ 
+ 
+\begin{document}
+ 
+\frame{\titlepage}
+ 
+ 
+
+\begin{frame}
+\frametitle{The Problem}
+\begin{itemize}
+\item The previous barrier solution will not work in a loop
+	\begin{itemize}
+	\item Why?
+	\end{itemize}
+\item How do we solve this problem?
+\item We need a reusable barrier that locks itself after all the threads have passed through
+\item Try it now!
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Why is this a bad solution?}
+\begin{verbatim}
+mutex.wait ()
+    count += 1
+mutex.signal ()
+
+if count == n : turnstile.signal ()
+turnstile.wait ()
+turnstile.signal ()
+//CRITICAL POINT
+
+mutex.wait ()
+    count -= 1
+mutex.signal ()
+if count == 0: turnstile.wait ()
+\end{verbatim}
+\end{frame}
+
+
+\begin{frame}[fragile]
+	\frametitle{Barrier Hint}
+\begin{verbatim}
+turnstile = Semaphore (0)
+turnstile2 = Semaphore (1)
+mutex = Semaphore (1)
+\end{verbatim}
+\begin{itemize}
+	\item Use two turnstiles
+\item One turnstile is always locked!
+\item Sometimes called a two phase barrier
+\end{itemize}
+\end{frame}
+
+
+
+\end{document}
+

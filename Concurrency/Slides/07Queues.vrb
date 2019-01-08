@@ -1,0 +1,17 @@
+\frametitle{Solution}
+\begin{verbatim}
+class fifo:
+    def __init__(self):
+        self.queue=Queue()
+        self.mutex=semaphore(1)
+    def wait():
+        self.mutex.wait()
+        self.queue.add(mySem)
+        self.mutex.signal()
+        mySem.wait()
+    def signal():
+        self.mutex.wait()
+        sem=self.queue.remove()
+        self.mutex.signal()
+        sem.signal()
+\end{verbatim}

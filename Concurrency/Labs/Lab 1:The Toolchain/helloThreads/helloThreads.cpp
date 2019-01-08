@@ -23,7 +23,7 @@
     The function prints out its thread id.
 */ 
  void call_from_thread(int tid) {
-          std::cout << "Launched by thread " << tid << std::endl;
+          std::cout << "Launched by thread " << tid << std::endl; 
 }
 
 
