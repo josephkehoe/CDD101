@@ -1,0 +1,161 @@
+
+
+\documentclass{beamer}
+ 
+\usepackage[utf8]{inputenc}
+ \usetheme{Madrid}
+ \usecolortheme{beaver}
+ \usefonttheme{structuresmallcapsserif}
+ \usepackage{listings}
+%Information to be included in the title page:
+
+
+\title[Concurrency] %optional
+{Some Classic Concurrency Problems}
+
+\subtitle{The Dining Philosophers}
+
+\author[Dr. Joseph Kehoe] % (optional, for multiple authors)
+{Joseph Kehoe\inst{1}}
+
+\institute[IT Carlow] % (optional)
+{
+	\inst{1}%
+	Department of Computing and Networking\\
+	Institute of Technology Carlow
+}
+
+\date[ITC 2017] % (optional)
+{CDD101, 2017}
+
+\logo{\includegraphics[height=1.5cm]{../../itcarlowlogo.png}}
+
+
+
+
+ 
+ \AtBeginSection[]
+ {
+ 	\begin{frame}
+ 		\frametitle{Table of Contents}
+ 		\tableofcontents[currentsection]
+ 	\end{frame}
+ }
+ 
+ 
+ 
+\begin{document}
+ 
+\frame{\titlepage}
+ 
+ 
+
+\begin{frame}
+\frametitle{Dining Philosophers}
+\begin{itemize}
+\item 5 philosophers sit at a table
+\item Each has a plate of spaghetti on a plate in front of him/her
+\item There are five forks
+	\begin{itemize}
+	\item one between each plate
+	\end{itemize}
+\item Philosophers think and eat
+\item In order to eat they need two forks
+	\begin{itemize}
+	\item one from each side
+	\end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{The Problem}
+\begin{itemize}
+\item Only one philosopher can hold a fork at a time
+\item It must be impossible for deadlock to occur
+\item It must be impossible for a philosopher to starve waiting for a fork
+\item It must be possible for more than one philosopher to eat at the same time
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]
+	\frametitle{Problem (continued)}
+\begin{verbatim}
+while true:
+think()
+get_forks()
+eat()
+put_forks()
+\end{verbatim}
+\begin{itemize}
+\item Assume philosophers are numbered 0 to 5
+\item forks are numbered 0 to 5
+\item philosopher j has fork j on left
+\item and fork j+1 on right (modulo 5)
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Bad Solution}
+\begin{verbatim}
+def left(j): return j
+def right(j): return (j+1)%5
+forks=[semaphore(1) for j in range(5)]
+
+def get_forks(j):
+    fork[right(j)].wait()
+    fork[left(j)].wait()
+
+def put_forks(j):
+    fork[right(j)].signal()
+    fork[left(j)].signal()
+\end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Hint}
+	\begin{itemize}
+	\item if only four philosophers are allowed to sit at the table at a time then deadlock is impossible
+\item isn’t it?
+	\end{itemize}
+	\begin{verbatim}
+footman=semaphore(4)
+\end{verbatim}
+
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Solution One}
+	
+\begin{verbatim}
+def get_forks(j):
+    footman.wait()
+    fork[right(j)].wait()
+    fork[left(j)].wait()
+def put_forks(j):
+    fork[right(j)].signal()
+    fork[left(j)].signal()
+    footman.signal()
+\end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Solution Two}
+	\begin{itemize}
+	\item Problem is that everyone picks up their left fork first
+	\item If one picks up their right fork first then we cannot deadlock
+\begin{itemize}
+\item is this true?
+\item Prove it! (proof by contradiction)
+\end{itemize}
+
+	\end{itemize}
+
+
+\end{frame}
+
+
+
+\end{document}
+

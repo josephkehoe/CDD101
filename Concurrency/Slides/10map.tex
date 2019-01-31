@@ -107,8 +107,8 @@ Often Combined with other patterns
 SAXPY - Scaled Vector Addition
 
 For each element i in a vector Y:
-$y[i] := a.x[i]+y[i]$
-where $y$ and $x$ are Vectors, $a$ is a constant
+$Y[i] := A\times X[i]+Y[i]$
+where $Y$ and $X$ are Vectors and $A$ is a constant
 
 \begin{itemize}
 	\item Depending on type of vector
@@ -131,6 +131,7 @@ This implies it does not scale well (why?)
 \begin{lstlisting}
 void saxpy(int n, float a,float y[], float x[])
 {
+#pragma omp parallel for
 	for (int i=0; i < n; ++i)
 	{
 		y[i]=a * x[i] + y[i];
@@ -185,26 +186,27 @@ void saxpy(int n, float a,float y[], float x[])
 	
 	\textbf{Main Loop}
 	\begin{lstlisting}
-	mandel( int p[][], int row, int col, int depth)
-	{
-	for(int i=0;i<row,++i)
-	{
-	for(int k=0;k<col;++k)
-	{
-	p[i][k]=calc(Complex(i,k),depth);
-	}
-	}
+	mandel( int p[][], int row, int col, 
+	        int depth){
+#pragma omp parallel for collapse(2)	  
+	  for(int i=0;i<row,++i)
+	  {
+        for(int k=0;k<col;++k)
+		{
+	       p[i][k]=calc(Complex(i,k),depth);
+		}
+	  }
 	}
 	\end{lstlisting}
 \end{frame}
 
 \section{Optimisation}
 \begin{frame}
-	\frametitle{Sequence of Maps versus Map of Sequence}
+	\frametitle{Sequence of Maps versus Map of Sequences}
 \begin{itemize}
 	\item A sequence of maps does not scale well (why?)
 	\item To increase arithmetic complexity we must do more work between memory reads
-so change into a a map of sequence (code fusion)
+so change into a  map of sequence (code fusion)
 	\item We load all data at the start of the map
 	\item Keep intermediate results in registers
 	\item Write out final result at end

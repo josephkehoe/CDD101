@@ -1,0 +1,198 @@
+
+
+\documentclass{beamer}
+ 
+\usepackage[utf8]{inputenc}
+ \usetheme{Madrid}
+ \usecolortheme{beaver}
+ \usefonttheme{structuresmallcapsserif}
+ \usepackage{listings}
+%Information to be included in the title page:
+
+
+\title[Concurrency] %optional
+{Performance}
+
+\subtitle{How do we measure it?}
+
+\author[Dr. Joseph Kehoe] % (optional, for multiple authors)
+{Joseph Kehoe\inst{1}}
+
+\institute[IT Carlow] % (optional)
+{
+	\inst{1}%
+	Department of Computing and Networking\\
+	Institute of Technology Carlow
+}
+
+\date[ITC 2017] % (optional)
+{CDD101, 2017}
+
+\logo{\includegraphics[height=1.5cm]{../../itcarlowlogo.png}}
+
+
+
+
+ 
+ \AtBeginSection[]
+ {
+ 	\begin{frame}
+ 		\frametitle{Table of Contents}
+ 		\tableofcontents[currentsection]
+ 	\end{frame}
+ }
+ 
+ 
+ 
+\begin{document}
+ 
+\frame{\titlepage}
+ 
+ 
+
+\begin{frame}[fragile]
+\frametitle{The Theory}
+\begin{itemize}
+\item Latency
+	\begin{itemize}
+	\item Total time it takes to compute a single result
+	\item Measured in units of time
+	\end{itemize}
+\item Throughput
+	\begin{itemize}
+	\item The rate at which a series of results can be computed
+	\item Measured in units of work per unit time
+\end{itemize}
+\item Power Consumption
+	\begin{itemize}
+	\item The amount of power required to performa computation
+	\item Measured in Work per power unit
+	\end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Speedup}
+Compares latency in solving an indentical problem on one hardware unit versus P hardware units
+
+$Sp=\frac{T1}{Tp}$
+
+Where S is Speed and T is time
+\begin{description}
+\item [Absolute Speedup] Sequential Algorithm Time used for T1
+\item [Relative Speedup] Parallel algorithm used for T1 
+\end{description}
+\end{frame}
+
+
+\begin{frame}[fragile]
+	\frametitle{Efficiency}
+\begin{itemize}
+\item Speedup divided by number of workers
+\item $\frac{Sp}{P}$
+\item $\frac{T1}{P\times Tp}$
+\item Ideal efficiency is 1
+\begin{itemize}
+\item aka 100\% efficiency
+\end{itemize}
+
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Superlinear Speedup}
+\begin{itemize}
+\item Parallel Algorithm makes better use of cache
+\item Parallel Algorithm is simply a better algorithm
+\item Parallel Algorithm with multiple threads uses cache better than single parallel algorithm execution
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Amdahl's Law}
+	Work is of two types:
+\begin{itemize}
+\item Serial Work that cannot be parallelised
+\item Parallel Work that can be done in parallel
+\item $T_{1}=Work_{serial} + Work_{parallel}$
+\item $T_{p}>=Work_{serial}+\frac{Work_{parallel}}{P}$
+	
+\end{itemize}
+\end{frame}
+\begin{frame}[fragile]
+	\frametitle{Amdahl's Law}
+	If f is the fraction of the total work that is serial then (1-f) is the fraction that is parallel
+\begin{itemize}
+\item $Work_{serial} = f\times T_{1}$
+\item $Work_{parallel}=(1-f)\times T_{1}$
+\item $S_{p}\leq \frac{1}{[f+\frac{(1-f)}{p}]}$
+\item As $P \rightarrow \infty$ then $S_{\infty}\leq \frac{1}{f}$
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Gustafson-Barsis’ Law}
+\begin{itemize}
+\item Amdahl’s Law viewed program size as fixed and the processor count as variable
+\item But program size can increase as processor count increases
+\item Sometimes the serial part remains constant as the program size increases
+\item Thus allowing for greater speedup
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Work-Span Model}
+\begin{itemize}
+\item Tasks form an acyclic graph
+	\begin{itemize}
+	\item Ignores communication and memory access costs
+	\item Assumes task scheduling is greedy
+	\end{itemize}
+\item $T_{1}$: time required for serial version of algorithm to run
+	\begin{itemize}
+	\item Known as Work
+	\end{itemize}
+\item $T_{\infty}$: time required for algorithm to run on ideal computer with infinite processors
+	\begin{itemize}
+	\item Known as Span
+	\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Work-Span Model}
+\begin{itemize}
+\item Span is equivalent to the length of the critical path 
+	\begin{itemize}
+	\item Aka depth, step complexity
+	\end{itemize}
+\item Superlinear speedup is impossible in the Work-Span Model
+	\begin{itemize}
+	\item $S_{p}=\frac{T_{1}}{T_{p}}$
+	\item $\frac{T_{1}}{T_{p}} \leq \frac{T_{1}}{(\frac{T_{1}}{P})} = P$
+	\item Therefore $S_{p}\leq P$
+	\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Work-Span Model}
+\begin{itemize}
+\item Adding new processors never slows down an algorithm
+	\begin{itemize}
+	\item Assuming greedy scheduling
+	\item $S_{p} =\frac{T_{1}}{T_{p}} \leq \frac{T_{1}}{T_{\infty}}$
+	\end{itemize}
+\item Brent’s Lemma
+	\begin{itemize}
+	\item $T_{p}\leq\frac{T_{1}-T_{\infty}}{P} + T_{\infty} if T_{\infty} << T_{1}$
+	\end{itemize}
+\item When working on parallelism focus on the span
+\item Increase work only if it decreases the span 
+\end{itemize}
+\end{frame}
+\end{document}
+

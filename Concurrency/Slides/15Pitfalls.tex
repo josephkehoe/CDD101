@@ -1,0 +1,148 @@
+
+
+\documentclass{beamer}
+ 
+\usepackage[utf8]{inputenc}
+ \usetheme{Madrid}
+ \usecolortheme{beaver}
+ \usefonttheme{structuresmallcapsserif}
+ \usepackage{listings}
+%Information to be included in the title page:
+
+
+\title[Concurrency] %optional
+{Pitfalls}
+
+\subtitle{What can go wrong}
+
+\author[Dr. Joseph Kehoe] % (optional, for multiple authors)
+{Joseph Kehoe\inst{1}}
+
+\institute[IT Carlow] % (optional)
+{
+	\inst{1}%
+	Department of Computing and Networking\\
+	Institute of Technology Carlow
+}
+
+\date[ITC 2017] % (optional)
+{CDD101, 2017}
+
+\logo{\includegraphics[height=1.5cm]{../../itcarlowlogo.png}}
+
+
+
+
+ 
+ \AtBeginSection[]
+ {
+ 	\begin{frame}
+ 		\frametitle{Table of Contents}
+ 		\tableofcontents[currentsection]
+ 	\end{frame}
+ }
+ 
+ 
+ 
+\begin{document}
+ 
+\frame{\titlepage}
+ 
+ 
+
+\begin{frame}[fragile]
+\frametitle{Race Conditions}
+\begin{itemize}
+\item Two or more threads perform operations on the same location at the same time
+\item Sequential Consistency may not be guaranteed!
+\item \textbf{System may reorder operations!}
+\end{itemize}
+\begin{verbatim}
+TaskA:
+    X=1
+    a=Y
+
+TaskB:
+    Y=1
+    b=X
+\end{verbatim}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Mutual Exclusion and Locks}
+\begin{itemize}
+\item Locks are a last resort
+\item Use Locks to protect logical invariants not memory locations
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]
+	\frametitle{Deadlock}
+\begin{itemize}
+\item Avoid Mutexes where possible
+\item Hold at most one lock at a time
+\item Never call someone elses code while holding a lock unless you are sure they never acquire a lock
+\item Always acquire multiple locks in the same order
+\begin{itemize}
+\item Stratify the mutexes
+\item Sort mutexes
+\item Backoff
+\end{itemize}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Strangled Scaling}
+\begin{itemize}
+\item Each Mutex is a potential bottleneck
+\item More threads means more contention
+\item Fine grained locking helps
+\item Atomic Operations can also be helpful
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Lack of Locality}
+	Two types of locality:
+\begin{itemize}
+\item Temporal Locality
+	\begin{itemize}
+	\item The core is likely to access the same location again in the near future
+	\end{itemize}
+\item Spatial Locality
+	\begin{itemize}
+	\item The core is likely to access nearby locations in the near future
+	\end{itemize}
+\item One the cache is full use everything in it before using anything else!
+\item Try use Cache Oblivious algorithms
+	\end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]
+	\frametitle{Load Imbalance}
+\begin{itemize}
+\item Uneven distribution of work accross workers
+\item Over-decomposition
+	\begin{itemize}
+	\item Divide the work into more tasks than there  are workers
+	\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Overhead}
+\begin{itemize}
+\item If tasks are too small then overhead per task is too large
+\item Watch arithmetic intensity!
+	\begin{itemize}
+	\item Ratio of arithmetic operations per memory access
+	\end{itemize}
+\end{itemize}
+\end{frame}
+
+\end{document}
+
